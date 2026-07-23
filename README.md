@@ -67,16 +67,27 @@ The diagnosis is deterministic and never invents a cause. Its confidence score i
 
 ## Architecture
 
-```text
-apps/web          React + Vite product UI and Supabase client
-apps/api          Python incident/explanation API for the full local stack
-apps/agent        OpenTelemetry-instrumented demo agent
-supabase          PostgreSQL migrations, triggers, functions, indexes, and RLS
-infra             SigNoz Foundry deployment, dashboard, and alert rules
-tests             Track 1 telemetry and infrastructure verification
+```mermaid
+flowchart LR
+    User["Judge / operator"] --> Web["React UI on Vercel"]
+    Web -->|"judge mode"| Demo["Browser-local demo data"]
+    Web -->|"authenticated mode"| Auth["Supabase Auth"]
+    Auth --> DB[("PostgreSQL + RLS")]
+    Web <--> DB
+
+    Agent["Instrumented AI agent"] --> OTel["OpenTelemetry SDK"]
+    API["Python incident API"] --> OTel
+    OTel -->|"OTLP traces, metrics, logs"| SigNoz[("SigNoz / ClickHouse")]
+    SigNoz --> Dashboard["Native dashboard"]
+    SigNoz --> Alerts["Terraform alerts"]
+    SigNoz <--> MCP["SigNoz MCP"]
+    API --> Web
+    SigNoz -. "captured proof" .-> Web
 ```
 
 The hosted authenticated product uses Supabase directly under RLS; its judge mode is deterministic and requires no account. The full Foundry path adds the Python API and live SigNoz telemetry pipeline. The UI links each investigation to committed SigNoz execution evidence so the data source is explicit.
+
+See [the complete architecture flow](docs/architecture.md) for the signal lifecycle, trust boundaries, and repository ownership map.
 
 ## Local Product
 
