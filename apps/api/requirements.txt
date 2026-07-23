@@ -1,0 +1,4 @@
+# Standard-library API server plus optional OpenTelemetry demo-agent dependencies.
+opentelemetry-api>=1.29.0
+opentelemetry-sdk>=1.29.0
+opentelemetry-exporter-otlp-proto-http>=1.29.0

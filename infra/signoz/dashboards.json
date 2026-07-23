@@ -1,0 +1,642 @@
+{
+    "description":  "Track 1 operations view for AI-agent execution, cost, retrieval quality, tool reliability, and correlated failures.",
+    "layout":  [
+                   {
+                       "h":  2,
+                       "i":  "028ff2ee-2ace-4cba-99d5-e1299c133f40",
+                       "moved":  false,
+                       "static":  false,
+                       "w":  4,
+                       "x":  0,
+                       "y":  0
+                   },
+                   {
+                       "h":  2,
+                       "i":  "38acebc6-b221-47bd-b1dd-b47c9cd6c629",
+                       "moved":  false,
+                       "static":  false,
+                       "w":  4,
+                       "x":  4,
+                       "y":  0
+                   },
+                   {
+                       "h":  2,
+                       "i":  "531e7a93-9a75-4445-b86b-69cc1debd77a",
+                       "moved":  false,
+                       "static":  false,
+                       "w":  4,
+                       "x":  8,
+                       "y":  0
+                   },
+                   {
+                       "h":  6,
+                       "i":  "2b2f1ac3-9d2d-42fd-a4b8-829dd5bb15f4",
+                       "moved":  false,
+                       "static":  false,
+                       "w":  6,
+                       "x":  0,
+                       "y":  2
+                   },
+                   {
+                       "h":  6,
+                       "i":  "ae5fd5b8-813d-49da-8dce-b14f65bb35ed",
+                       "moved":  false,
+                       "static":  false,
+                       "w":  6,
+                       "x":  6,
+                       "y":  2
+                   },
+                   {
+                       "h":  6,
+                       "i":  "728b5e6e-ae9a-4d8b-a1ef-036a37432436",
+                       "moved":  false,
+                       "static":  false,
+                       "w":  6,
+                       "x":  0,
+                       "y":  8
+                   },
+                   {
+                       "h":  6,
+                       "i":  "61f17e71-adad-4c98-81bb-aa7e92f21777",
+                       "moved":  false,
+                       "static":  false,
+                       "w":  6,
+                       "x":  6,
+                       "y":  8
+                   }
+               ],
+    "name":  "",
+    "tags":  [
+                 "ai-agent",
+                 "opentelemetry",
+                 "track-1"
+             ],
+    "title":  "AgentScope Sidekick - AI Agent Observability",
+    "variables":  {
+
+                  },
+    "version":  "v5",
+    "widgets":  [
+                    {
+                        "description":  "Total agent runs in the selected time range.",
+                        "id":  "028ff2ee-2ace-4cba-99d5-e1299c133f40",
+                        "isStacked":  false,
+                        "nullZeroValues":  "zero",
+                        "opacity":  "1",
+                        "panelTypes":  "value",
+                        "query":  {
+                                      "builder":  {
+                                                      "queryData":  [
+                                                                        {
+                                                                            "dataSource":  "metrics",
+                                                                            "disabled":  false,
+                                                                            "expression":  "A",
+                                                                            "groupBy":  [
+
+                                                                                        ],
+                                                                            "having":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "legend":  "",
+                                                                            "limit":  null,
+                                                                            "orderBy":  [
+
+                                                                                        ],
+                                                                            "queryName":  "A",
+                                                                            "stepInterval":  60,
+                                                                            "aggregations":  [
+                                                                                                 {
+                                                                                                     "metricName":  "agentscope.agent.runs",
+                                                                                                     "temporality":  null,
+                                                                                                     "timeAggregation":  "latest",
+                                                                                                     "spaceAggregation":  "sum",
+                                                                                                     "reduceTo":  "sum"
+                                                                                                 }
+                                                                                             ],
+                                                                            "filter":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "functions":  [
+
+                                                                                          ],
+                                                                            "source":  ""
+                                                                        }
+                                                                    ],
+                                                      "queryFormulas":  [
+
+                                                                        ]
+                                                  },
+                                      "clickhouse_sql":  [
+                                                             {
+                                                                 "disabled":  false,
+                                                                 "legend":  "",
+                                                                 "name":  "A",
+                                                                 "query":  ""
+                                                             }
+                                                         ],
+                                      "id":  "80553a12-e190-4b60-b79a-3efb331391d1",
+                                      "promql":  [
+                                                     {
+                                                         "disabled":  false,
+                                                         "legend":  "",
+                                                         "name":  "A",
+                                                         "query":  ""
+                                                     }
+                                                 ],
+                                      "queryType":  "builder"
+                                  },
+                        "thresholds":  [
+
+                                       ],
+                        "timePreferance":  "GLOBAL_TIME",
+                        "title":  "Agent Runs",
+                        "yAxisUnit":  "none"
+                    },
+                    {
+                        "description":  "Total LLM tokens consumed by all agent runs.",
+                        "id":  "38acebc6-b221-47bd-b1dd-b47c9cd6c629",
+                        "isStacked":  false,
+                        "nullZeroValues":  "zero",
+                        "opacity":  "1",
+                        "panelTypes":  "value",
+                        "query":  {
+                                      "builder":  {
+                                                      "queryData":  [
+                                                                        {
+                                                                            "dataSource":  "metrics",
+                                                                            "disabled":  false,
+                                                                            "expression":  "A",
+                                                                            "groupBy":  [
+
+                                                                                        ],
+                                                                            "having":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "legend":  "",
+                                                                            "limit":  null,
+                                                                            "orderBy":  [
+
+                                                                                        ],
+                                                                            "queryName":  "A",
+                                                                            "stepInterval":  60,
+                                                                            "aggregations":  [
+                                                                                                 {
+                                                                                                     "metricName":  "agentscope.agent.tokens",
+                                                                                                     "temporality":  null,
+                                                                                                     "timeAggregation":  "latest",
+                                                                                                     "spaceAggregation":  "sum",
+                                                                                                     "reduceTo":  "sum"
+                                                                                                 }
+                                                                                             ],
+                                                                            "filter":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "functions":  [
+
+                                                                                          ],
+                                                                            "source":  ""
+                                                                        }
+                                                                    ],
+                                                      "queryFormulas":  [
+
+                                                                        ]
+                                                  },
+                                      "clickhouse_sql":  [
+                                                             {
+                                                                 "disabled":  false,
+                                                                 "legend":  "",
+                                                                 "name":  "A",
+                                                                 "query":  ""
+                                                             }
+                                                         ],
+                                      "id":  "1b08b044-f1f0-41a9-818f-e29b2a03dac7",
+                                      "promql":  [
+                                                     {
+                                                         "disabled":  false,
+                                                         "legend":  "",
+                                                         "name":  "A",
+                                                         "query":  ""
+                                                     }
+                                                 ],
+                                      "queryType":  "builder"
+                                  },
+                        "thresholds":  [
+                                           {
+                                               "index":  "27460d34-f0d0-44aa-97ef-7c4b152909d2",
+                                               "isEditEnabled":  false,
+                                               "keyIndex":  0,
+                                               "selectedGraph":  "graph",
+                                               "thresholdColor":  "Red",
+                                               "thresholdFormat":  "Text",
+                                               "thresholdLabel":  "Token budget",
+                                               "thresholdOperator":  "\u003e",
+                                               "thresholdTableOptions":  "",
+                                               "thresholdUnit":  "none",
+                                               "thresholdValue":  10000
+                                           }
+                                       ],
+                        "timePreferance":  "GLOBAL_TIME",
+                        "title":  "Token Consumption",
+                        "yAxisUnit":  "none"
+                    },
+                    {
+                        "description":  "Tool calls whose status label is error.",
+                        "id":  "531e7a93-9a75-4445-b86b-69cc1debd77a",
+                        "isStacked":  false,
+                        "nullZeroValues":  "zero",
+                        "opacity":  "1",
+                        "panelTypes":  "value",
+                        "query":  {
+                                      "builder":  {
+                                                      "queryData":  [
+                                                                        {
+                                                                            "dataSource":  "metrics",
+                                                                            "disabled":  false,
+                                                                            "expression":  "A",
+                                                                            "groupBy":  [
+
+                                                                                        ],
+                                                                            "having":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "legend":  "",
+                                                                            "limit":  null,
+                                                                            "orderBy":  [
+
+                                                                                        ],
+                                                                            "queryName":  "A",
+                                                                            "stepInterval":  60,
+                                                                            "aggregations":  [
+                                                                                                 {
+                                                                                                     "metricName":  "agentscope.tool.calls",
+                                                                                                     "temporality":  null,
+                                                                                                     "timeAggregation":  "latest",
+                                                                                                     "spaceAggregation":  "sum",
+                                                                                                     "reduceTo":  "sum"
+                                                                                                 }
+                                                                                             ],
+                                                                            "filter":  {
+                                                                                           "expression":  "status = \u0027error\u0027"
+                                                                                       },
+                                                                            "functions":  [
+
+                                                                                          ],
+                                                                            "source":  ""
+                                                                        }
+                                                                    ],
+                                                      "queryFormulas":  [
+
+                                                                        ]
+                                                  },
+                                      "clickhouse_sql":  [
+                                                             {
+                                                                 "disabled":  false,
+                                                                 "legend":  "",
+                                                                 "name":  "A",
+                                                                 "query":  ""
+                                                             }
+                                                         ],
+                                      "id":  "b38e8f5d-c7d2-44a4-b2d5-ac466f5f844c",
+                                      "promql":  [
+                                                     {
+                                                         "disabled":  false,
+                                                         "legend":  "",
+                                                         "name":  "A",
+                                                         "query":  ""
+                                                     }
+                                                 ],
+                                      "queryType":  "builder"
+                                  },
+                        "thresholds":  [
+                                           {
+                                               "index":  "01fcd89c-92d1-4f99-9857-9edfa66e4b84",
+                                               "isEditEnabled":  false,
+                                               "keyIndex":  0,
+                                               "selectedGraph":  "graph",
+                                               "thresholdColor":  "Red",
+                                               "thresholdFormat":  "Text",
+                                               "thresholdLabel":  "Failures",
+                                               "thresholdOperator":  "\u003e",
+                                               "thresholdTableOptions":  "",
+                                               "thresholdUnit":  "none",
+                                               "thresholdValue":  0
+                                           }
+                                       ],
+                        "timePreferance":  "GLOBAL_TIME",
+                        "title":  "Failed Tool Calls",
+                        "yAxisUnit":  "none"
+                    },
+                    {
+                        "description":  "Run throughput grouped by failure-injection scenario.",
+                        "id":  "2b2f1ac3-9d2d-42fd-a4b8-829dd5bb15f4",
+                        "isStacked":  true,
+                        "nullZeroValues":  "zero",
+                        "opacity":  "1",
+                        "panelTypes":  "graph",
+                        "query":  {
+                                      "builder":  {
+                                                      "queryData":  [
+                                                                        {
+                                                                            "dataSource":  "metrics",
+                                                                            "disabled":  false,
+                                                                            "expression":  "A",
+                                                                            "groupBy":  [
+                                                                                            {
+                                                                                                "dataType":  "string",
+                                                                                                "id":  "scenario--string--tag--false",
+                                                                                                "isColumn":  false,
+                                                                                                "isJSON":  false,
+                                                                                                "key":  "scenario",
+                                                                                                "type":  "tag"
+                                                                                            }
+                                                                                        ],
+                                                                            "having":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "legend":  "{{scenario}}",
+                                                                            "limit":  null,
+                                                                            "orderBy":  [
+
+                                                                                        ],
+                                                                            "queryName":  "A",
+                                                                            "stepInterval":  60,
+                                                                            "aggregations":  [
+                                                                                                 {
+                                                                                                     "metricName":  "agentscope.agent.runs",
+                                                                                                     "temporality":  null,
+                                                                                                     "timeAggregation":  "latest",
+                                                                                                     "spaceAggregation":  "sum",
+                                                                                                     "reduceTo":  "sum"
+                                                                                                 }
+                                                                                             ],
+                                                                            "filter":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "functions":  [
+
+                                                                                          ],
+                                                                            "source":  ""
+                                                                        }
+                                                                    ],
+                                                      "queryFormulas":  [
+
+                                                                        ]
+                                                  },
+                                      "clickhouse_sql":  [
+                                                             {
+                                                                 "disabled":  false,
+                                                                 "legend":  "",
+                                                                 "name":  "A",
+                                                                 "query":  ""
+                                                             }
+                                                         ],
+                                      "id":  "f5072cc0-aa1c-45aa-90d8-6c86d1e843e4",
+                                      "promql":  [
+                                                     {
+                                                         "disabled":  false,
+                                                         "legend":  "",
+                                                         "name":  "A",
+                                                         "query":  ""
+                                                     }
+                                                 ],
+                                      "queryType":  "builder"
+                                  },
+                        "thresholds":  [
+
+                                       ],
+                        "timePreferance":  "GLOBAL_TIME",
+                        "title":  "Agent Runs by Scenario",
+                        "yAxisUnit":  "ops"
+                    },
+                    {
+                        "description":  "Maximum tokens per run grouped by scenario exposes successful but expensive runs.",
+                        "id":  "ae5fd5b8-813d-49da-8dce-b14f65bb35ed",
+                        "isStacked":  false,
+                        "nullZeroValues":  "zero",
+                        "opacity":  "1",
+                        "panelTypes":  "graph",
+                        "query":  {
+                                      "builder":  {
+                                                      "queryData":  [
+                                                                        {
+                                                                            "dataSource":  "metrics",
+                                                                            "disabled":  false,
+                                                                            "expression":  "A",
+                                                                            "groupBy":  [
+                                                                                            {
+                                                                                                "dataType":  "string",
+                                                                                                "id":  "scenario--string--tag--false",
+                                                                                                "isColumn":  false,
+                                                                                                "isJSON":  false,
+                                                                                                "key":  "scenario",
+                                                                                                "type":  "tag"
+                                                                                            }
+                                                                                        ],
+                                                                            "having":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "legend":  "{{scenario}}",
+                                                                            "limit":  null,
+                                                                            "orderBy":  [
+
+                                                                                        ],
+                                                                            "queryName":  "A",
+                                                                            "stepInterval":  60,
+                                                                            "aggregations":  [
+                                                                                                 {
+                                                                                                     "metricName":  "agentscope.agent.tokens_per_run.max",
+                                                                                                     "temporality":  null,
+                                                                                                     "timeAggregation":  "latest",
+                                                                                                     "spaceAggregation":  "max",
+                                                                                                     "reduceTo":  "max"
+                                                                                                 }
+                                                                                             ],
+                                                                            "filter":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "functions":  [
+
+                                                                                          ],
+                                                                            "source":  ""
+                                                                        }
+                                                                    ],
+                                                      "queryFormulas":  [
+
+                                                                        ]
+                                                  },
+                                      "clickhouse_sql":  [
+                                                             {
+                                                                 "disabled":  false,
+                                                                 "legend":  "",
+                                                                 "name":  "A",
+                                                                 "query":  ""
+                                                             }
+                                                         ],
+                                      "id":  "684ca3ec-5996-470f-8cb0-678fb7643c0f",
+                                      "promql":  [
+                                                     {
+                                                         "disabled":  false,
+                                                         "legend":  "",
+                                                         "name":  "A",
+                                                         "query":  ""
+                                                     }
+                                                 ],
+                                      "queryType":  "builder"
+                                  },
+                        "thresholds":  [
+
+                                       ],
+                        "timePreferance":  "GLOBAL_TIME",
+                        "title":  "Tokens per Run max",
+                        "yAxisUnit":  "none"
+                    },
+                    {
+                        "description":  "p95 end-to-end agent latency from the root ResearchAgent.run span.",
+                        "id":  "728b5e6e-ae9a-4d8b-a1ef-036a37432436",
+                        "isStacked":  false,
+                        "nullZeroValues":  "zero",
+                        "opacity":  "1",
+                        "panelTypes":  "graph",
+                        "query":  {
+                                      "builder":  {
+                                                      "queryData":  [
+                                                                        {
+                                                                            "dataSource":  "traces",
+                                                                            "disabled":  false,
+                                                                            "expression":  "A",
+                                                                            "groupBy":  [
+                                                                                            {
+                                                                                                "dataType":  "string",
+                                                                                                "id":  "scenario--string--tag--false",
+                                                                                                "isColumn":  false,
+                                                                                                "isJSON":  false,
+                                                                                                "key":  "scenario",
+                                                                                                "type":  "tag"
+                                                                                            }
+                                                                                        ],
+                                                                            "having":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "legend":  "{{scenario}}",
+                                                                            "limit":  null,
+                                                                            "orderBy":  [
+
+                                                                                        ],
+                                                                            "queryName":  "A",
+                                                                            "stepInterval":  60,
+                                                                            "aggregations":  [
+                                                                                                 {
+                                                                                                     "expression":  "p95(durationNano)"
+                                                                                                 }
+                                                                                             ],
+                                                                            "filter":  {
+                                                                                           "expression":  "service.name = \u0027agentscope-demo-agent\u0027 AND name = \u0027ResearchAgent.run\u0027"
+                                                                                       }
+                                                                        }
+                                                                    ],
+                                                      "queryFormulas":  [
+
+                                                                        ]
+                                                  },
+                                      "clickhouse_sql":  [
+                                                             {
+                                                                 "disabled":  false,
+                                                                 "legend":  "",
+                                                                 "name":  "A",
+                                                                 "query":  ""
+                                                             }
+                                                         ],
+                                      "id":  "2778bc8b-f0cc-4035-beae-f781794aa3fb",
+                                      "promql":  [
+                                                     {
+                                                         "disabled":  false,
+                                                         "legend":  "",
+                                                         "name":  "A",
+                                                         "query":  ""
+                                                     }
+                                                 ],
+                                      "queryType":  "builder"
+                                  },
+                        "thresholds":  [
+
+                                       ],
+                        "timePreferance":  "GLOBAL_TIME",
+                        "title":  "Agent Latency p95",
+                        "yAxisUnit":  "ns"
+                    },
+                    {
+                        "description":  "Correlated WARN and ERROR logs from the instrumented agent.",
+                        "id":  "61f17e71-adad-4c98-81bb-aa7e92f21777",
+                        "isStacked":  false,
+                        "nullZeroValues":  "zero",
+                        "opacity":  "1",
+                        "panelTypes":  "graph",
+                        "query":  {
+                                      "builder":  {
+                                                      "queryData":  [
+                                                                        {
+                                                                            "dataSource":  "logs",
+                                                                            "disabled":  false,
+                                                                            "expression":  "A",
+                                                                            "groupBy":  [
+                                                                                            {
+                                                                                                "dataType":  "string",
+                                                                                                "id":  "severity_text--string--tag--true",
+                                                                                                "isColumn":  true,
+                                                                                                "isJSON":  false,
+                                                                                                "key":  "severity_text",
+                                                                                                "type":  "tag"
+                                                                                            }
+                                                                                        ],
+                                                                            "having":  {
+                                                                                           "expression":  ""
+                                                                                       },
+                                                                            "legend":  "{{severity_text}}",
+                                                                            "limit":  null,
+                                                                            "orderBy":  [
+
+                                                                                        ],
+                                                                            "queryName":  "A",
+                                                                            "stepInterval":  60,
+                                                                            "aggregations":  [
+                                                                                                 {
+                                                                                                     "expression":  "count()"
+                                                                                                 }
+                                                                                             ],
+                                                                            "filter":  {
+                                                                                           "expression":  "service.name = \u0027agentscope-demo-agent\u0027 AND severity_text IN (\u0027WARN\u0027, \u0027ERROR\u0027)"
+                                                                                       }
+                                                                        }
+                                                                    ],
+                                                      "queryFormulas":  [
+
+                                                                        ]
+                                                  },
+                                      "clickhouse_sql":  [
+                                                             {
+                                                                 "disabled":  false,
+                                                                 "legend":  "",
+                                                                 "name":  "A",
+                                                                 "query":  ""
+                                                             }
+                                                         ],
+                                      "id":  "a86f1110-fd2f-45d9-99d4-e5073cd287cc",
+                                      "promql":  [
+                                                     {
+                                                         "disabled":  false,
+                                                         "legend":  "",
+                                                         "name":  "A",
+                                                         "query":  ""
+                                                     }
+                                                 ],
+                                      "queryType":  "builder"
+                                  },
+                        "thresholds":  [
+
+                                       ],
+                        "timePreferance":  "GLOBAL_TIME",
+                        "title":  "Correlated Error Logs",
+                        "yAxisUnit":  "none"
+                    }
+                ]
+}

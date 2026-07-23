@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.vite/
+.venv/
+__pycache__/
+*.pyc
+.env
+**/.terraform/
+*.tfstate*
+
+.env.local
+.env.*.local

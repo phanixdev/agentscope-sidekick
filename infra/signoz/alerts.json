@@ -1,0 +1,42 @@
+{
+    "schema":  "agentscope-sidekick.alert-catalog.v1",
+    "deployment":  "infra/signoz/alerts.tf",
+    "alerts":  [
+                   {
+                       "name":  "AgentScope: tool failures detected",
+                       "severity":  "critical",
+                       "signal":  "metrics",
+                       "metric":  "agentscope.tool.calls",
+                       "condition":  "sum where status = \u0027error\u0027 \u003e 0 during 5m",
+                       "scenario":  "tool_failure",
+                       "runbook":  "Open the Sidekick run, pivot to its trace ID, and inspect tool.search_docs plus the correlated ERROR log."
+                   },
+                   {
+                       "name":  "AgentScope: agent latency above budget",
+                       "severity":  "warning",
+                       "signal":  "metrics",
+                       "metric":  "agentscope.agent.duration.max",
+                       "condition":  "max \u003e 10000 ms during 5m",
+                       "scenario":  "any",
+                       "runbook":  "Compare retrieval, tool, and LLM child-span duration to locate the bottleneck."
+                   },
+                   {
+                       "name":  "AgentScope: token budget exceeded",
+                       "severity":  "warning",
+                       "signal":  "metrics",
+                       "metric":  "agentscope.agent.tokens_per_run.max",
+                       "condition":  "max \u003e 10000 tokens during 5m",
+                       "scenario":  "token_spike",
+                       "runbook":  "Inspect GenAI usage attributes and reduce prompt context or add a per-run token guardrail."
+                   },
+                   {
+                       "name":  "AgentScope: retrieval quality degraded",
+                       "severity":  "warning",
+                       "signal":  "metrics",
+                       "metric":  "agentscope.retrieval.score.min",
+                       "condition":  "min \u003c 0.3 during 5m",
+                       "scenario":  "retrieval_miss",
+                       "runbook":  "Inspect vector_db.query spans, source diversity, results used, and query filters."
+                   }
+               ]
+}

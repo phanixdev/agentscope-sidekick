@@ -1,0 +1,50 @@
+﻿name: agentscope-sidekick
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.116.1
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8889:8889"
+    volumes:
+      - ./otel/collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      AGENTSCOPE_ENV: docker-demo
+    ports:
+      - "8088:8088"
+    depends_on:
+      - otel-collector
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+  demo-agent:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    command: python -m apps.agent.demo_agent
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      AGENTSCOPE_ENV: docker-demo
+    depends_on:
+      - otel-collector
+    profiles:
+      - demo-once
+
+# For the complete SigNoz + MCP + Sidekick stack, use the official Foundry
+# deployment generated from casting.yaml under infra/pours/deployment.

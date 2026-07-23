@@ -1,0 +1,96 @@
+# Foundry installs SigNoz + MCP and patches the generated Compose deployment
+# with the AgentScope dashboard, API, and instrumented demo agent.
+apiVersion: v1alpha1
+kind: Installation
+metadata:
+  name: agentscope-sidekick
+spec:
+  deployment:
+    mode: docker
+    flavor: compose
+  mcp:
+    spec:
+      enabled: true
+  patches:
+    - target: 'deployment[/\\]compose.yaml'
+      operations:
+        - op: add
+          path: /services/agentscope-api
+          value:
+            build:
+              context: ../../..
+              dockerfile: apps/api/Dockerfile
+            container_name: agentscope-sidekick-api
+            environment:
+              OTEL_EXPORTER_OTLP_ENDPOINT: http://ingester:4318
+              AGENTSCOPE_ENV: foundry-demo
+            networks:
+              - agentscope-sidekick-network
+            ports:
+              - "8088:8088"
+            depends_on:
+              ingester:
+                condition: service_healthy
+            restart: unless-stopped
+        - op: add
+          path: /services/agentscope-web
+          value:
+            build:
+              context: ../../..
+              dockerfile: apps/web/Dockerfile
+            container_name: agentscope-sidekick-web
+            networks:
+              - agentscope-sidekick-network
+            ports:
+              - "5173:5173"
+            depends_on:
+              agentscope-api:
+                condition: service_started
+            restart: unless-stopped
+        - op: add
+          path: /services/agentscope-demo-agent
+          value:
+            build:
+              context: ../../..
+              dockerfile: apps/api/Dockerfile
+            command:
+              - python
+              - -m
+              - apps.agent.demo_agent
+            container_name: agentscope-sidekick-demo-agent
+            environment:
+              OTEL_EXPORTER_OTLP_ENDPOINT: http://ingester:4318
+              AGENTSCOPE_ENV: foundry-demo
+            networks:
+              - agentscope-sidekick-network
+            depends_on:
+              ingester:
+                condition: service_healthy
+            profiles:
+              - demo-once
+        - op: replace
+          path: /services/ingester/command
+          value:
+            - -c
+            - |
+              /signoz-otel-collector migrate sync check &&
+              /signoz-otel-collector --config=/etc/otel-collector-config.yaml
+        - op: add
+          path: /services/ingester/healthcheck
+          value:
+            test:
+              - CMD-SHELL
+              - bash -c 'echo > /dev/tcp/127.0.0.1/4318'
+            interval: 5s
+            timeout: 3s
+            retries: 24
+            start_period: 30s
+        - op: add
+          path: /services/agentscope-sidekick-signoz-0/environment/-
+          value: SIGNOZ_TOKENIZER_JWT_SECRET=${SIGNOZ_TOKENIZER_JWT_SECRET}
+        - op: add
+          path: /services/agentscope-sidekick-mcp/environment/-
+          value: SIGNOZ_API_KEY=${SIGNOZ_API_KEY}
+
+
+
