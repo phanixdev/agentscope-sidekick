@@ -19,6 +19,11 @@ class MobileAlertContractTests(unittest.TestCase):
         self.assertIn('content:"Affected: "', self.styles)
         self.assertIn(".alert-row>.alert-actions{grid-column:1/-1", self.styles)
 
+    def test_mobile_investigation_keeps_all_lineage_steps_visible(self):
+        self.assertIn(".investigation-lineage{grid-template-columns:1fr 1fr;gap:6px}", self.styles)
+        self.assertNotIn(".investigation-lineage>span:nth-of-type(3)", self.styles)
+        self.assertNotIn(".investigation-lineage>span:nth-of-type(4)", self.styles)
+
 
 if __name__ == "__main__":
     unittest.main()
