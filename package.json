@@ -1,14 +1,15 @@
 {
   "name": "agentscope-sidekick",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
+    "test:js": "node --test tests/js/*.test.js",
     "test:py": "python -m unittest discover -s tests",
-    "check": "npm run build && npm run test:py"
+    "check": "npm run build && npm run test:js && npm run test:py"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

@@ -9,6 +9,7 @@ class JudgeExperienceContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.ui = (ROOT / "apps/web/src/main.jsx").read_text(encoding="utf-8")
+        cls.alert_rules = (ROOT / "apps/web/src/lib/alertRules.js").read_text(encoding="utf-8")
         cls.data = (ROOT / "apps/web/src/data.js").read_text(encoding="utf-8")
         cls.migration = (ROOT / "supabase/migrations/202607230001_initial_schema.sql").read_text(encoding="utf-8")
         cls.baseline_migration = (ROOT / "supabase/migrations/202607230003_observed_healthy_baselines.sql").read_text(encoding="utf-8")
@@ -40,7 +41,18 @@ class JudgeExperienceContractTests(unittest.TestCase):
             "agentscope.retrieval.score.min",
             "agentscope.agent.duration.max",
         ):
-            self.assertIn(metric, self.ui)
+            self.assertIn(metric, self.alert_rules)
+        self.assertIn("affectedRunsForAlert(alert, runs)", self.ui)
+        self.assertIn("strongest.run", self.ui)
+        self.assertIn("observed {alertContext.observed}", self.ui)
+
+
+    def test_ephemeral_and_resolved_states_are_explicit(self):
+        self.assertIn("ephemeral demo", self.ui)
+        self.assertIn("resets on refresh", self.ui)
+        self.assertIn("Active guardrail breaches", self.ui)
+        self.assertIn("Resolved by verification", self.ui)
+        self.assertIn("Remediation verification", (ROOT / "apps/web/src/lib/runService.js").read_text(encoding="utf-8"))
 
     def test_slo_view_uses_operational_guardrails(self):
         for label in ("Run success", "p95 latency", "Tool reliability", "Token compliance", "Retrieval quality"):

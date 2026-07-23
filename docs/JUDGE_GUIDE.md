@@ -5,9 +5,9 @@
 - Judge demo: https://agentscope-sidekick.vercel.app/?demo=1
 - Authenticated product: https://agentscope-sidekick.vercel.app
 - Source: https://github.com/phanixdev/agentscope-sidekick
-- Release: https://github.com/phanixdev/agentscope-sidekick/releases/tag/v1.0.0-hackathon
+- Release: https://github.com/phanixdev/agentscope-sidekick/releases/latest
 
-Judge mode is a deterministic, zero-credential dataset. It is labeled as reference data in the product. Authenticated workspaces use Supabase persistence and tenant-scoped RLS.
+Judge mode is a deterministic, zero-credential, browser-local dataset that resets on refresh. It is labeled as ephemeral reference data in the product. Authenticated workspaces use Supabase persistence and tenant-scoped RLS.
 
 ## 90-second path
 
@@ -36,7 +36,7 @@ Judge mode is a deterministic, zero-credential dataset. It is labeled as referen
 
 - **Judge mode:** versioned deterministic incident and reference cohorts; no claim of live peer aggregation.
 - **Authenticated mode:** workspace runs are persisted under Supabase RLS. A healthy baseline appears only after at least five healthy runs in the selected 24-hour window; otherwise the UI explicitly falls back to the deterministic reference.
-- **SigNoz proof:** captured from the reproducible Foundry deployment. Screenshots are paired with raw MCP, API, ClickHouse, OTLP, and Terraform evidence.
+- **SigNoz proof:** captured from the reproducible Foundry deployment. The judge incident matches trace `70468b87b41bc6ecbe14d95f30ebcd2c` in evidence revision `c83b4f7`; the extended canonical trace is a separately labeled capture. Screenshots are paired with raw MCP, API, ClickHouse, OTLP, and Terraform evidence.
 
 ## Verification
 

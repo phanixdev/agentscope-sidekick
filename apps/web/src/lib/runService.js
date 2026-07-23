@@ -126,7 +126,18 @@ export async function listRuns(workspaceId, preview = false) {
 export async function createDemoRun(scenario, preview = false) {
   if (!supabase || preview) {
     const template = agentRuns.find((run) => run.scenario.toLowerCase().replace(" ", "_") === scenario) ?? agentRuns[0];
-    return { ...template, id: `run_${crypto.randomUUID().slice(0, 8)}`, startTime: "just now" };
+    const traceId = crypto.randomUUID().replaceAll("-", "");
+    const capturedAt = new Date().toISOString();
+    return {
+      ...template,
+      id: `run_${traceId.slice(0, 8)}`,
+      traceId,
+      capturedAt,
+      startedAt: capturedAt,
+      startTime: "just now",
+      attributes: { ...template.attributes, evidence_source: "Ephemeral judge dataset" },
+      spans: template.spans.map((span) => ({ ...span, id: crypto.randomUUID().replaceAll("-", "").slice(0, 16) }))
+    };
   }
   const { data, error } = await supabase.rpc("create_demo_run", { scenario_key: scenario });
   if (error) throw error;
@@ -159,7 +170,10 @@ function previewRemediationRun(run, action) {
     tools: run.scenario === "Retrieval miss" ? "2/2" : run.tools,
     summary: "The remediation rerun completed within all configured telemetry guardrails.",
     nextActions: ["Monitor the repaired path for regression."],
-    spans: run.spans.map((span, index) => ({ ...span, id: `verified_${index}_${crypto.randomUUID().slice(0, 6)}`, status: "ok", start: span.start / Math.max(run.latency, 1) * latency, duration: Math.min(span.duration, latency * (index === 0 ? 1 : 0.35)) })),
+    scenario: "Remediation verification",
+    sourceScenario: run.sourceScenario ?? run.scenario,
+    attributes: { ...run.attributes, evidence_source: "Ephemeral verification rerun" },
+    spans: run.spans.map((span, index) => ({ ...span, id: crypto.randomUUID().replaceAll("-", "").slice(0, 16), status: "ok", start: span.start / Math.max(run.latency, 1) * latency, duration: Math.min(span.duration, latency * (index === 0 ? 1 : 0.35)) })),
     logs: [
       { time: "now", level: "INFO", service: "remediation", message: `Applied: ${action}` },
       { time: "now", level: "INFO", service: "agent", message: "Verification rerun passed latency, token, retrieval, and tool guardrails" }

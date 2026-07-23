@@ -11,7 +11,7 @@ class ExplanationTests(unittest.TestCase):
     def test_tool_failure_explanation_cites_failing_span(self):
         explanation = explain_run(get_run("run_7f3a1c9d"))
         self.assertIn("tool.search_docs", explanation["summary"])
-        self.assertIn("trace_id=a1b2c3d", explanation["evidence"])
+        self.assertIn("trace_id=70468b87b41bc6ecbe14d95f30ebcd2c", explanation["evidence"])
 
     def test_retrieval_miss_uses_retrieval_score(self):
         explanation = explain_run(get_run("run_2c8b4e7a"))

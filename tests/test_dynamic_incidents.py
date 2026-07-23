@@ -10,7 +10,7 @@ class DynamicIncidentTests(unittest.TestCase):
     def test_recorded_demo_run_appears_first(self):
         created = record_demo_run(
             {
-                "trace_id": "abc123def4567890",
+                "trace_id": "abc123def4567890abc123def4567890",
                 "scenario": "token_spike",
                 "retrieval_score": 0.74,
                 "tool_status": "ok",
@@ -25,7 +25,7 @@ class DynamicIncidentTests(unittest.TestCase):
     def test_dynamic_tool_failure_can_be_explained(self):
         created = record_demo_run(
             {
-                "trace_id": "feedfacecafebeef",
+                "trace_id": "feedfacecafebeeffeedfacecafebeef",
                 "scenario": "tool_failure",
                 "retrieval_score": 0.66,
                 "tool_status": "error",
@@ -36,13 +36,13 @@ class DynamicIncidentTests(unittest.TestCase):
         explanation = explain_run(fetched)
         self.assertEqual(fetched.status, "failed")
         self.assertIn("tool.search_docs", explanation["summary"])
-        self.assertIn("trace_id=feedfacecafebeef", explanation["evidence"])
+        self.assertIn("trace_id=feedfacecafebeeffeedfacecafebeef", explanation["evidence"])
 
     def test_reset_demo_runs_restores_seed_count(self):
         seed_count = len(list_runs())
         record_demo_run(
             {
-                "trace_id": "abc123def4567890",
+                "trace_id": "abc123def4567890abc123def4567890",
                 "scenario": "retrieval_miss",
                 "retrieval_score": 0.18,
                 "tool_status": "ok",

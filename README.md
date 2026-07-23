@@ -18,7 +18,7 @@ AgentScope Sidekick is a production-shaped AI agent observability product for Tr
 5. Open **Remediate**, apply one recommendation, and inspect the verified before/after rerun.
 6. In **Alerts**, choose **Investigate** on a breached guardrail to deep-link into its affected run and evidence.
 7. Choose **View SigNoz proof** for the captured failing trace, native dashboard, deployed alerts, MCP JSON, metric API response, and Terraform apply output.
-The hosted judge workspace is deliberately zero-friction and uses deterministic demo data. Authenticated production workspaces persist under Supabase RLS. The reproducible Foundry stack emits and queries the real traces, metrics, and logs shown below.
+The hosted judge workspace is deliberately zero-friction and uses deterministic, browser-local demo data that resets on refresh. Authenticated production workspaces persist under Supabase RLS. The reproducible Foundry stack emits and queries the real traces, metrics, and logs shown below.
 
 ## Live SigNoz Proof
 
@@ -36,12 +36,14 @@ The hosted judge workspace is deliberately zero-friction and uses deterministic 
 
 The verified stack ingested **14 spans**, **8 trace-correlated logs**, every custom agent metric series, and **4 Terraform-managed alert rules**. SigNoz MCP read the failing trace and updated the native dashboard; raw query and apply evidence is committed under `output/telemetry/`.
 
+The judge incident and prominent failing-trace proof use the same captured OpenTelemetry trace, `70468b87b41bc6ecbe14d95f30ebcd2c`, from evidence revision `c83b4f7`. The later extended HTTP-to-agent-to-persistence contract is verified separately in `output/telemetry/otel-all-signals.txt`; the UI does not conflate those two captures.
+
 ### Track 1 coverage matrix
 
 | Scoring surface | Implementation | Verifiable evidence |
 | --- | --- | --- |
 | Foundry reproducibility | Locked SigNoz + MCP deployment | `infra/casting.yaml`, `infra/casting.yaml.lock` |
-| OpenTelemetry traces | Agent, LLM, retrieval, and tool span trees | `output/telemetry/mcp-failing-trace.json` |
+| OpenTelemetry traces | Captured agent tree plus extended HTTP-to-persistence contract | `output/telemetry/mcp-failing-trace.json`, `output/telemetry/otel-all-signals.txt` |
 | Metrics | Duration, tokens, tool calls, retrieval quality | `output/telemetry/signoz-api-metric-proof.json` |
 | Correlated logs | Trace/span IDs on WARN and ERROR events | `output/telemetry/clickhouse-live-proof.txt` |
 | Native dashboard | Multi-signal Track 1 operations dashboard | `infra/signoz/dashboards.json` |
@@ -76,7 +78,7 @@ The diagnosis is deterministic and never invents a cause. The UI shows `3/3 sign
 - Transactional onboarding that seeds a judge-ready incident workspace.
 - Authenticated demo-run RPC for tool failure, retrieval miss, and token spike scenarios.
 - Responsive run explorer, overview, alert management, team view, working run/log filters, loading, error, empty, and toast states.
-- One-click judge demo in every environment, plus local preview mode when Supabase variables are absent.
+- One-click ephemeral judge demo in every environment, plus local preview mode when Supabase variables are absent.
 - Live SigNoz, OpenTelemetry collector, MCP, Terraform alerts, and native dashboard assets.
 
 ## Architecture
@@ -155,7 +157,7 @@ npm.cmd run check
 .\scripts\verify_demo.ps1
 ```
 
-The 56-test suite covers explanations, dynamic incidents, confidence provenance, observed baseline gating, remediation verification, failure recovery, accessibility contracts, alert deep links, Supabase RLS contracts, Foundry artifacts, dashboard schema, alert rules, and all-signal OpenTelemetry evidence. GitHub Actions runs the production build and complete suite on every push and pull request. Browser QA covers authenticated sign-in, transactional onboarding, demo-run creation, investigation notes, alerts, desktop, and mobile layouts.
+The combined Python and Node verification suite covers evidence identity, breach-aware alert targeting, explanations, dynamic incidents, confidence provenance, observed baseline gating, remediation verification, failure recovery, accessibility contracts, Supabase RLS contracts, Foundry artifacts, dashboard schema, alert rules, and all-signal OpenTelemetry evidence. GitHub Actions runs the production build and complete suite on every push and pull request. Browser QA covers authentication entry, judge-run creation, remediation, alert drill-down, proof viewing, desktop, and mobile layouts.
 
 ## Security
 
