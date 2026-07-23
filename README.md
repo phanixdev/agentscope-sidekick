@@ -31,6 +31,18 @@ The hosted judge workspace is deliberately zero-friction and uses deterministic 
 
 The verified stack ingested **14 spans**, **8 trace-correlated logs**, every custom agent metric series, and **4 Terraform-managed alert rules**. SigNoz MCP read the failing trace and updated the native dashboard; raw query and apply evidence is committed under `output/telemetry/`.
 
+### Track 1 coverage matrix
+
+| Scoring surface | Implementation | Verifiable evidence |
+| --- | --- | --- |
+| Foundry reproducibility | Locked SigNoz + MCP deployment | `infra/casting.yaml`, `infra/casting.yaml.lock` |
+| OpenTelemetry traces | Agent, LLM, retrieval, and tool span trees | `output/telemetry/mcp-failing-trace.json` |
+| Metrics | Duration, tokens, tool calls, retrieval quality | `output/telemetry/signoz-api-metric-proof.json` |
+| Correlated logs | Trace/span IDs on WARN and ERROR events | `output/telemetry/clickhouse-live-proof.txt` |
+| Native dashboard | Multi-signal Track 1 operations dashboard | `infra/signoz/dashboards.json` |
+| Alerts | Four Terraform-managed guardrails | `infra/signoz/alerts.tf`, `output/telemetry/terraform-alerts-apply.txt` |
+| SigNoz MCP | Trace investigation and dashboard update | `output/telemetry/mcp-dashboard-update.json` |
+
 ## Winning Track 1 Story
 
 1. Trigger a realistic bad agent run.
