@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity, AlertTriangle, Bell, Bot, Check, CheckCircle2, ChevronDown,
@@ -25,7 +25,7 @@ const initials = (user) => (user?.user_metadata?.full_name || user?.email || "Tr
   .toUpperCase();
 
 function evidenceFor(run) {
-  const failedSpan = run.spans.find((span) => span.status === "error");
+  const failedSpan = run.spans.find((span) => span.status === "error" && span.service !== "agent") || run.spans.find((span) => span.status === "error");
   const warningSpan = run.spans.find((span) => span.status === "warn");
   const correlatedLog = run.logs.find((log) => ["ERROR", "WARN"].includes(log.level));
   const metric = run.tokens > 12000
@@ -55,7 +55,7 @@ function confidenceFor(run) {
   const signals = evidenceFor(run);
   const anomalies = signals.filter((signal) => signal.kind !== "ok").length;
   const traceBonus = run.traceId ? 0.04 : 0;
-  return Math.min(0.98, 0.82 + anomalies * 0.04 + traceBonus);
+  return Math.min(0.96, 0.78 + anomalies * 0.04 + traceBonus);
 }
 
 function Sidebar({ view, setView, workspace, open, close, runs, filters, setFilters, alertCount }) {
@@ -226,8 +226,9 @@ function Product({ user, preview }) {
 }
 
 function Root() {
+  const judgeMode = new URLSearchParams(window.location.search).get("demo") === "1";
   const [session, setSession] = useState(null);
-  const [preview, setPreview] = useState(!supabase);
+  const [preview, setPreview] = useState(!supabase || judgeMode);
   const [checking, setChecking] = useState(Boolean(supabase));
   useEffect(() => {
     if (!supabase) return;

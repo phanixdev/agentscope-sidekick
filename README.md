@@ -1,19 +1,18 @@
 # AgentScope Sidekick
 
-**Live product:** https://agentscope-sidekick.vercel.app
+**Live judge demo:** https://agentscope-sidekick.vercel.app/?demo=1
+**Authenticated product:** https://agentscope-sidekick.vercel.app
 **Source:** https://github.com/phanixdev/agentscope-sidekick
 
 AgentScope Sidekick is a production-shaped AI agent observability product for Track 1 of the Agents of SigNoz hackathon. It turns correlated OpenTelemetry traces, metrics, and logs into evidence-backed incident explanations for tool failures, retrieval misses, token spikes, and latency regressions.
 
 ## Judge It in 90 Seconds
 
-1. Open the [live product](https://agentscope-sidekick.vercel.app).
-2. Choose **Explore judge demo**. No account or email confirmation is required.
-3. Select the failed `Tool failure` run and open **Evidence**.
-4. Inspect the failed span, threshold breach, correlated log, trace ID, and computed confidence.
-5. Choose **View SigNoz proof** to see the captured failing trace, native dashboard, and deployed alert rules.
-6. Create a `Retrieval miss` or `Token spike` run to verify that the diagnosis and evidence change with telemetry.
-
+1. Open the [one-click judge demo](https://agentscope-sidekick.vercel.app/?demo=1). No account or email confirmation is required.
+2. Select the failed `Tool failure` run and open **Evidence**.
+3. Inspect the failed span, threshold breach, correlated log, trace ID, and computed confidence.
+4. Choose **View SigNoz proof** to see the captured failing trace, native dashboard, and deployed alert rules.
+5. Create a `Retrieval miss` or `Token spike` run to verify that the diagnosis and evidence change with telemetry.
 The hosted judge workspace is deliberately zero-friction and uses deterministic demo data. Authenticated production workspaces persist under Supabase RLS. The reproducible Foundry stack emits and queries the real traces, metrics, and logs shown below.
 
 ## Live SigNoz Proof
