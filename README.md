@@ -1,9 +1,36 @@
-﻿# AgentScope Sidekick
+# AgentScope Sidekick
 
 **Live product:** https://agentscope-sidekick.vercel.app
 **Source:** https://github.com/phanixdev/agentscope-sidekick
 
 AgentScope Sidekick is a production-shaped AI agent observability product for Track 1 of the Agents of SigNoz hackathon. It turns correlated OpenTelemetry traces, metrics, and logs into evidence-backed incident explanations for tool failures, retrieval misses, token spikes, and latency regressions.
+
+## Judge It in 90 Seconds
+
+1. Open the [live product](https://agentscope-sidekick.vercel.app).
+2. Choose **Explore judge demo**. No account or email confirmation is required.
+3. Select the failed `Tool failure` run and open **Evidence**.
+4. Inspect the failed span, threshold breach, correlated log, trace ID, and computed confidence.
+5. Choose **View SigNoz proof** to see the captured failing trace, native dashboard, and deployed alert rules.
+6. Create a `Retrieval miss` or `Token spike` run to verify that the diagnosis and evidence change with telemetry.
+
+The hosted judge workspace is deliberately zero-friction and uses deterministic demo data. Authenticated production workspaces persist under Supabase RLS. The reproducible Foundry stack emits and queries the real traces, metrics, and logs shown below.
+
+## Live SigNoz Proof
+
+### Correlated failing trace
+
+![AgentScope failing tool trace in SigNoz](output/signoz/failing-trace-live.png)
+
+### Native all-signals dashboard
+
+![AgentScope native SigNoz dashboard](output/signoz/dashboard-live.png)
+
+### Terraform-managed alert guardrails
+
+![AgentScope alert rules in SigNoz](output/signoz/alerts-live.png)
+
+The verified stack ingested **14 spans**, **8 trace-correlated logs**, every custom agent metric series, and **4 Terraform-managed alert rules**. SigNoz MCP read the failing trace and updated the native dashboard; raw query and apply evidence is committed under `output/telemetry/`.
 
 ## Winning Track 1 Story
 
@@ -13,7 +40,7 @@ AgentScope Sidekick is a production-shaped AI agent observability product for Tr
 4. Save the investigation handoff.
 5. Show the matching SigNoz alert guardrail.
 
-The explanation never invents a cause: it cites trace IDs, failed spans, token usage, retrieval scores, status codes, and correlated logs.
+The diagnosis is deterministic and never invents a cause. Its confidence score is derived from the available anomaly signals, and every conclusion exposes the trace ID, failed or warning span, threshold comparison, and correlated log used as evidence.
 
 ## Complete Product
 
@@ -23,8 +50,8 @@ The explanation never invents a cause: it cites trace IDs, failed spans, token u
 - Indexed agent runs, spans, logs, alerts, and investigation notes.
 - Transactional onboarding that seeds a judge-ready incident workspace.
 - Authenticated demo-run RPC for tool failure, retrieval miss, and token spike scenarios.
-- Responsive run explorer, overview, alert management, team view, filters, loading, error, empty, and toast states.
-- Local preview mode when Supabase variables are absent.
+- Responsive run explorer, overview, alert management, team view, working run/log filters, loading, error, empty, and toast states.
+- One-click judge demo in every environment, plus local preview mode when Supabase variables are absent.
 - Live SigNoz, OpenTelemetry collector, MCP, Terraform alerts, and native dashboard assets.
 
 ## Architecture
@@ -38,7 +65,7 @@ infra             SigNoz Foundry deployment, dashboard, and alert rules
 tests             Track 1 telemetry and infrastructure verification
 ```
 
-The deployed web product uses Supabase directly under RLS. The local full-stack path adds the Python API and live SigNoz telemetry pipeline.
+The hosted authenticated product uses Supabase directly under RLS; its judge mode is deterministic and requires no account. The full Foundry path adds the Python API and live SigNoz telemetry pipeline. The UI links each investigation to committed SigNoz execution evidence so the data source is explicit.
 
 ## Local Product
 
@@ -49,7 +76,7 @@ Copy-Item .env.example .env.local
 npm.cmd run dev
 ```
 
-Without `.env.local`, the same UI opens in browser-local preview mode.
+Without `.env.local`, the same UI opens in browser-local preview mode. With Supabase configured, unauthenticated visitors can still choose **Explore judge demo** without creating an account.
 
 Apply `supabase/migrations` to a Supabase project, then configure these Vercel variables:
 

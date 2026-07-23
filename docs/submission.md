@@ -58,4 +58,4 @@ This project was planned and implemented with assistance from OpenAI Codex / Cha
 
 ## Production Product Layer
 
-The submission now includes Supabase authentication, workspace-scoped PostgreSQL persistence, row-level security, transactional onboarding, persisted investigation notes, authenticated demo-run generation, responsive product views, and Vercel deployment configuration. The production UI remains usable in preview mode, while authenticated mode was verified against a live Supabase project from account creation through RLS-protected writes.
+The submission now includes Supabase authentication, workspace-scoped PostgreSQL persistence, row-level security, transactional onboarding, persisted investigation notes, authenticated demo-run generation, responsive product views, and Vercel deployment configuration. The production UI offers a one-click judge demo in every environment, while authenticated mode was verified against a live Supabase project from account creation through RLS-protected writes. The hosted UI labels its Supabase and captured SigNoz sources explicitly.

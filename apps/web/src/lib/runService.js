@@ -41,8 +41,8 @@ function fromDatabase(run) {
   };
 }
 
-export async function getWorkspace() {
-  if (!supabase) return { id: "preview", name: "Acme AI", environment: "Production", role: "owner" };
+export async function getWorkspace(preview = false) {
+  if (!supabase || preview) return { id: "preview", name: "Track 1 Judge Workspace", environment: "Production", role: "judge" };
   const { data, error } = await supabase
     .from("workspace_members")
     .select("role, workspaces(id, name, environment)")
@@ -53,8 +53,8 @@ export async function getWorkspace() {
   return { ...data.workspaces, role: data.role };
 }
 
-export async function listRuns(workspaceId) {
-  if (!supabase) return agentRuns;
+export async function listRuns(workspaceId, preview = false) {
+  if (!supabase || preview) return agentRuns;
   const { data, error } = await supabase
     .from("agent_runs")
     .select("*, run_spans(*), run_logs(*)")
@@ -64,8 +64,8 @@ export async function listRuns(workspaceId) {
   return data.map(fromDatabase);
 }
 
-export async function createDemoRun(scenario) {
-  if (!supabase) {
+export async function createDemoRun(scenario, preview = false) {
+  if (!supabase || preview) {
     const template = agentRuns.find((run) => run.scenario.toLowerCase().replace(" ", "_") === scenario) ?? agentRuns[0];
     return { ...template, id: `run_${crypto.randomUUID().slice(0, 8)}`, startTime: "just now" };
   }
@@ -74,8 +74,8 @@ export async function createDemoRun(scenario) {
   return data;
 }
 
-export async function listAlerts(workspaceId) {
-  if (!supabase) {
+export async function listAlerts(workspaceId, preview = false) {
+  if (!supabase || preview) {
     return [
       { id: "tool-errors", name: "Tool error rate", metric: "agentscope.tool.calls", threshold: "> 5%", enabled: true, severity: "critical" },
       { id: "token-budget", name: "Token budget exceeded", metric: "agentscope.agent.tokens_per_run.max", threshold: "> 12k", enabled: true, severity: "warning" },
@@ -88,14 +88,14 @@ export async function listAlerts(workspaceId) {
   return data;
 }
 
-export async function toggleAlert(id, enabled) {
-  if (!supabase) return;
+export async function toggleAlert(id, enabled, preview = false) {
+  if (!supabase || preview) return;
   const { error } = await supabase.from("alert_rules").update({ enabled }).eq("id", id);
   if (error) throw error;
 }
 
-export async function getNote(runId) {
-  if (!supabase) {
+export async function getNote(runId, preview = false) {
+  if (!supabase || preview) {
     const notes = JSON.parse(localStorage.getItem(localNotesKey) ?? "{}");
     return notes[runId] ?? "";
   }
@@ -104,8 +104,8 @@ export async function getNote(runId) {
   return data?.body ?? "";
 }
 
-export async function saveNote(runId, body) {
-  if (!supabase) {
+export async function saveNote(runId, body, preview = false) {
+  if (!supabase || preview) {
     const notes = JSON.parse(localStorage.getItem(localNotesKey) ?? "{}");
     notes[runId] = body;
     localStorage.setItem(localNotesKey, JSON.stringify(notes));

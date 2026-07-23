@@ -89,7 +89,8 @@ export function AuthScreen({ onPreview }) {
           <button className="primary auth-submit" disabled={busy || !isSupabaseConfigured}>
             {busy ? <LoaderCircle className="spin" size={17} /> : <ArrowRight size={17} />}{submitLabel}
           </button>
-          {!isSupabaseConfigured && <button type="button" className="secondary auth-submit" onClick={onPreview}>Open product preview</button>}
+          <div className="judge-divider"><span>or skip setup</span></div>
+          <button type="button" className="secondary auth-submit judge-entry" onClick={onPreview}><Eye size={17} />Explore judge demo</button>
           <div className="auth-switch">
             {mode === "signup" ? "Already have an account?" : "New to AgentScope?"}
             <button type="button" className="text-button" onClick={() => setMode(mode === "signup" ? "signin" : "signup")}>

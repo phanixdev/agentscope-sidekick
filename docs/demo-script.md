@@ -14,7 +14,7 @@ Say:
 
 ## 0:40 - 1:10: Show the Sidekick
 
-Open AgentScope Sidekick at `http://127.0.0.1:5173`. Point out the run list, latency, tokens, retrieval score, trace timeline, and correlated logs.
+Open the deployed AgentScope Sidekick and choose **Explore judge demo**. Point out the run list, computed confidence, cited evidence, trace timeline, and correlated logs. Use **View SigNoz proof** before returning to the live local SigNoz trace.
 
 ## 1:10 - 1:45: Explain a tool failure
 
