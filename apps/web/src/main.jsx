@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  Activity, AlertTriangle, Bell, Bot, Check, CheckCircle2, ChevronDown,
+  Activity, AlertTriangle, ArrowRight, Bell, Bot, Check, CheckCircle2, ChevronDown,
   ChevronRight, CircleDot, Copy, Database, Download, ExternalLink, FileText,
-  Fingerprint, Gauge, LayoutDashboard, LoaderCircle, LogOut, Menu, Pause,
-  Play, RadioTower, RefreshCw, Search, ShieldCheck, Terminal, Users, X, XCircle
+  Fingerprint, Gauge, GitCompareArrows, LayoutDashboard, LoaderCircle, LogOut, Menu, Pause,
+  Play, RadioTower, RefreshCw, Search, ShieldCheck, Target, Terminal, Users, X, XCircle
 } from "lucide-react";
 import { AuthScreen } from "./components/AuthScreen";
 import { supabase } from "./lib/supabase";
@@ -51,11 +51,40 @@ function evidenceFor(run) {
   ];
 }
 
+function metricProvenance(run) {
+  if (run.tokens > 12000) return { name: "agentscope.agent.tokens_per_run.max", query: "max(total_tokens) > 12000" };
+  if (run.retrieval < 0.3) return { name: "agentscope.retrieval.score.min", query: "min(retrieval_score) < 0.30" };
+  return { name: "agentscope.agent.duration.max", query: "max(duration) > 10s" };
+}
+
+function confidenceBreakdown(run) {
+  const evidence = evidenceFor(run);
+  const anomalySpan = evidence[0];
+  const metric = evidence[1];
+  const log = evidence[2];
+  const signals = [
+    { label: "Anomalous span", detail: anomalySpan.value, matched: anomalySpan.kind !== "ok" },
+    { label: "Guardrail breach", detail: metric.detail, matched: metric.kind !== "ok" },
+    { label: "Trace-correlated log", detail: log.detail, matched: log.kind !== "ok" && Boolean(run.traceId) }
+  ];
+  const matched = signals.filter((signal) => signal.matched).length;
+  const score = Math.min(0.94, 0.70 + matched * 0.08);
+  return { label: matched === 3 ? "High" : matched === 2 ? "Medium" : "Low", matched, score, signals };
+}
+
 function confidenceFor(run) {
-  const signals = evidenceFor(run);
-  const anomalies = signals.filter((signal) => signal.kind !== "ok").length;
-  const traceBonus = run.traceId ? 0.04 : 0;
-  return Math.min(0.96, 0.78 + anomalies * 0.04 + traceBonus);
+  return confidenceBreakdown(run).score;
+}
+
+function formatCapturedAt(run) {
+  if (!run.capturedAt) return "Current workspace session";
+  return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" }).format(new Date(run.capturedAt));
+}
+
+function percentDelta(current, baseline) {
+  if (!baseline) return "n/a";
+  const delta = (current - baseline) / baseline * 100;
+  return `${delta >= 0 ? "+" : ""}${delta.toFixed(0)}%`;
 }
 
 function Sidebar({ view, setView, workspace, open, close, runs, filters, setFilters, alertCount }) {
@@ -113,19 +142,44 @@ function EvidenceList({ run }) {
   return <div className="evidence-list">{evidenceFor(run).map((item) => <div key={item.label}><span className={`evidence-icon ${item.kind}`}><Fingerprint size={15}/></span><span><small>{item.label}</small><strong>{item.value}</strong><p>{item.detail}</p></span></div>)}</div>;
 }
 
+function ConfidenceProvenance({ run }) {
+  const confidence = confidenceBreakdown(run);
+  return <section className="confidence-provenance" aria-label="Diagnosis confidence provenance">
+    <div><span><ShieldCheck size={17}/><strong>{confidence.label} confidence</strong></span><span>{confidence.matched}/3 signals corroborated <b>{confidence.score.toFixed(2)}</b></span></div>
+    <div className="confidence-signals">{confidence.signals.map((signal) => <span className={signal.matched ? "matched" : ""} key={signal.label}>{signal.matched ? <CheckCircle2 size={14}/> : <XCircle size={14}/>}<span><strong>{signal.label}</strong><small>{signal.detail}</small></span></span>)}</div>
+    <small className="confidence-formula">Score: 0.70 evidence baseline + 0.08 for each corroborating signal.</small>
+  </section>;
+}
+
 function Explanation({ run, openProof }) {
   const issues = [{ title: run.scenario, copy: run.summary, label: run.scenario === "Tool failure" ? "Root cause" : "Contributing", kind: run.scenario === "Tool failure" ? "danger" : "warn" }];
   if (run.retrieval < 0.3 && run.scenario !== "Retrieval miss") issues.push({ title: "Retrieval miss", copy: `Mean score ${run.retrieval.toFixed(2)} is below the 0.30 quality threshold.`, label: "Contributing", kind: "warn" });
   if (run.tokens > 12000 && run.scenario !== "Token spike") issues.push({ title: "Token spike", copy: `${run.tokens.toLocaleString()} tokens exceeds the 12k run budget.`, label: "Contributing", kind: "warn" });
-  return <div className="explanation"><div className="explanation-head"><span>Deterministic telemetry diagnosis</span><span>Confidence <b>{confidenceFor(run).toFixed(2)}</b></span></div>{issues.map((issue) => <div className="finding" key={issue.title}>{issue.kind === "danger" ? <XCircle className="danger" size={18}/> : <AlertTriangle className="warn" size={18}/>}<span><strong>{issue.title}</strong><p>{issue.copy}</p></span><b className={issue.kind}>{issue.label}</b></div>)}<EvidenceList run={run}/><div className="explanation-actions"><details><summary><ChevronRight size={16}/>Recommended actions</summary><ul>{run.nextActions.map((action) => <li key={action}>{action}</li>)}</ul></details><button className="secondary" onClick={openProof}><RadioTower size={15}/>View SigNoz proof</button></div></div>;
+  return <div className="explanation"><div className="explanation-head"><span>Deterministic telemetry diagnosis</span><span>Auditable evidence</span></div><ConfidenceProvenance run={run}/>{issues.map((issue) => <div className="finding" key={issue.title}>{issue.kind === "danger" ? <XCircle className="danger" size={18}/> : <AlertTriangle className="warn" size={18}/>}<span><strong>{issue.title}</strong><p>{issue.copy}</p></span><b className={issue.kind}>{issue.label}</b></div>)}<EvidenceList run={run}/><div className="explanation-actions"><details><summary><ChevronRight size={16}/>Recommended actions</summary><ul>{run.nextActions.map((action) => <li key={action}>{action}</li>)}</ul></details><button className="secondary" onClick={openProof}><RadioTower size={15}/>View SigNoz proof</button></div></div>;
 }
 
-function Inspector({ run, openNote, openProof, notify }) {
-  const [tab, setTab] = useState("explain");
+function Comparison({ run }) {
+  const baseline = run.baseline;
+  if (!baseline) return <div className="comparison-empty"><GitCompareArrows size={22}/><strong>No healthy baseline available</strong><p>Record a successful peer run to unlock regression comparison.</p></div>;
+  const rows = [
+    ["Latency", `${run.latency.toFixed(2)}s`, `${baseline.latency.toFixed(2)}s`, percentDelta(run.latency, baseline.latency), run.latency > baseline.latency * 1.5 ? "danger" : "ok"],
+    ["Tokens", run.tokens.toLocaleString(), baseline.tokens.toLocaleString(), percentDelta(run.tokens, baseline.tokens), run.tokens > baseline.tokens * 2 ? "warn" : "ok"],
+    ["Retrieval", run.retrieval.toFixed(2), baseline.retrieval.toFixed(2), percentDelta(run.retrieval, baseline.retrieval), run.retrieval < baseline.retrieval * 0.6 ? "danger" : "ok"],
+    ["Estimated cost", `${run.cost.toFixed(3)}`, `${baseline.cost.toFixed(3)}`, percentDelta(run.cost, baseline.cost), run.cost > baseline.cost * 2 ? "warn" : "ok"]
+  ];
+  const divergentSpan = run.spans.find((span) => ["error", "warn"].includes(span.status));
+  return <div className="comparison"><header><span><GitCompareArrows size={16}/><strong>Current run vs healthy baseline</strong></span><small>{baseline.sampleSize} successful peer runs / last 24 hours</small></header><div className="comparison-row head"><span>Signal</span><span>Current</span><span>Baseline</span><span>Delta</span></div>{rows.map(([label, current, reference, delta, kind]) => <div className="comparison-row" key={label}><strong>{label}</strong><span>{current}</span><span>{reference}</span><b className={kind}>{delta}</b></div>)}{divergentSpan && <div className="divergence"><Target size={16}/><span><strong>First divergent span</strong><code>{divergentSpan.name}</code><small>{divergentSpan.status} / {divergentSpan.duration.toFixed(2)}s / {divergentSpan.id || "span ID in SigNoz"}</small></span></div>}</div>;
+}
+
+function Inspector({ run, openNote, openProof, notify, alertContext }) {
+  const [tab, setTab] = useState(alertContext ? "evidence" : "explain");
+  useEffect(() => { if (alertContext) setTab("evidence"); }, [alertContext]);
   if (!run) return <section className="panel empty">Select a run to investigate.</section>;
-  const detail = [["Trace ID", run.traceId], ["Agent", run.agent], ["Actor", run.user], ["Environment", "Production"], ["Input tokens", run.inputTokens.toLocaleString()], ["Output tokens", run.outputTokens.toLocaleString()], ["Estimated cost", `$${run.cost.toFixed(3)}`], ["Tool calls", run.tools]];
+  const detail = [["Trace ID", run.traceId], ["Agent", run.agent], ["Actor", run.user], ["Environment", "Production"], ["Input tokens", run.inputTokens.toLocaleString()], ["Output tokens", run.outputTokens.toLocaleString()], ["Estimated cost", `${run.cost.toFixed(3)}`], ["Tool calls", run.tools]];
+  const anomalySpan = run.spans.find((span) => ["error", "warn"].includes(span.status));
+  const metric = metricProvenance(run);
   const copyTrace = async () => { await navigator.clipboard.writeText(run.traceId); notify("Trace ID copied"); };
-  return <section className="inspector panel"><div className="inspector-title"><span className={`incident ${tone(run.status)}`}>{run.status === "failed" ? <X size={14}/> : <Check size={14}/>}</span><strong>{run.id}</strong><span>{run.agent}</span><span className={`status ${tone(run.status)}`}><i/>{run.status}</span><time>{run.startTime}</time></div><div className="tabs">{[["explain", "Explain"], ["evidence", "Evidence"], ["details", "Details"], ["metrics", "Metrics"], ["events", "Events"]].map(([id, label]) => <button key={id} className={tab === id ? "active" : ""} onClick={() => setTab(id)}>{label}</button>)}<button className="note" onClick={openNote}><FileText size={15}/>Note</button></div>{tab === "explain" && <Explanation run={run} openProof={openProof}/>} {tab === "evidence" && <div className="evidence-tab"><div className="trace-strip"><span><small>Correlated trace</small><code>{run.traceId}</code></span><button aria-label="Copy trace ID" className="icon-button" onClick={copyTrace}><Copy size={15}/></button></div><EvidenceList run={run}/><button className="secondary full-width" onClick={openProof}><RadioTower size={15}/>Inspect captured SigNoz trace, dashboard, and alerts</button></div>} {tab === "details" && <div className="detail-grid">{detail.map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>} {tab === "metrics" && <div className="metric-strip">{[["Duration", `${run.latency.toFixed(2)}s`, run.latency > 10 ? "danger" : "ok"], ["Tokens", run.tokens.toLocaleString(), run.tokens > 12000 ? "warn" : "ok"], ["Retrieval", run.retrieval.toFixed(2), run.retrieval < 0.3 ? "danger" : "ok"], ["Cost", `$${run.cost.toFixed(3)}`, "ok"]].map(([label, value, kind]) => <div key={label}><span>{label}</span><strong className={kind}>{value}</strong></div>)}</div>} {tab === "events" && <div className="events">{run.logs.map((log) => <div key={log.id || log.time + log.message}><time>{log.time}</time><b className={tone(log.level.toLowerCase())}>{log.level}</b><span>{log.message}</span></div>)}</div>}</section>;
+  return <section className="inspector panel">{alertContext && <div className="alert-context"><Bell size={14}/><span>Opened from <strong>{alertContext.name}</strong><small>{alertContext.metric} {alertContext.threshold}</small></span></div>}<div className="inspector-title"><span className={`incident ${tone(run.status)}`}>{run.status === "failed" ? <X size={14}/> : <Check size={14}/>}</span><strong>{run.id}</strong><span>{run.agent}</span><span className={`status ${tone(run.status)}`}><i/>{run.status}</span><time>{run.startTime}</time></div><div className="tabs">{[["explain", "Explain"], ["evidence", "Evidence"], ["compare", "Compare"], ["details", "Details"], ["metrics", "Metrics"], ["events", "Events"]].map(([id, label]) => <button key={id} className={tab === id ? "active" : ""} onClick={() => setTab(id)}>{label}</button>)}<button className="note" onClick={openNote}><FileText size={15}/>Note</button></div>{tab === "explain" && <Explanation run={run} openProof={openProof}/>} {tab === "evidence" && <div className="evidence-tab"><div className="trace-strip"><span><small>Correlated trace</small><code>{run.traceId}</code></span><button aria-label="Copy trace ID" className="icon-button" onClick={copyTrace}><Copy size={15}/></button></div><div className="provenance-grid"><span><small>Source</small><strong>SigNoz / OpenTelemetry</strong></span><span><small>Captured</small><strong>{formatCapturedAt(run)}</strong></span><span><small>Span ID</small><code>{anomalySpan?.id || "Available in trace query"}</code></span><span><small>Metric query</small><code>{metric.query}</code></span></div><EvidenceList run={run}/><button className="secondary full-width" onClick={openProof}><RadioTower size={15}/>Inspect captured SigNoz trace, dashboard, and alerts</button></div>} {tab === "compare" && <Comparison run={run}/>} {tab === "details" && <div className="detail-grid">{detail.map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>} {tab === "metrics" && <div className="metric-strip">{[["Duration", `${run.latency.toFixed(2)}s`, run.latency > 10 ? "danger" : "ok"], ["Tokens", run.tokens.toLocaleString(), run.tokens > 12000 ? "warn" : "ok"], ["Retrieval", run.retrieval.toFixed(2), run.retrieval < 0.3 ? "danger" : "ok"], ["Cost", `${run.cost.toFixed(3)}`, "ok"]].map(([label, value, kind]) => <div key={label}><span>{label}</span><strong className={kind}>{value}</strong></div>)}</div>} {tab === "events" && <div className="events">{run.logs.map((log) => <div key={log.id || log.time + log.message}><time>{log.time}</time><b className={tone(log.level.toLowerCase())}>{log.level}</b><span>{log.message}</span></div>)}</div>}</section>;
 }
 
 function Timeline({ run }) {
@@ -153,31 +207,43 @@ function Logs({ run, notify }) {
   return <section className="logs panel"><div className="section-bar"><strong>Correlated logs</strong><select aria-label="Filter log level" value={level} onChange={(event) => setLevel(event.target.value)}><option value="all">All levels</option>{[...new Set(run.logs.map((log) => log.level))].map((item) => <option key={item}>{item}</option>)}</select><select aria-label="Filter log service" value={service} onChange={(event) => setService(event.target.value)}><option value="all">All services</option>{services.map((item) => <option key={item}>{item}</option>)}</select><label><Search size={14}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search logs..."/></label><span className={paused ? "paused" : "streaming"}>{paused ? "Paused" : "Streaming"}<i/></span><button aria-label={paused ? "Resume log stream" : "Pause log stream"} className="icon-button" onClick={() => setPaused(!paused)}>{paused ? <Play size={15}/> : <Pause size={15}/>}</button><button aria-label="Export logs" className="icon-button" onClick={download}><Download size={15}/></button></div><div className="log-row head"><span>Time</span><span>Level</span><span>Service</span><span>Message</span></div>{visible.map((log) => <div className="log-row" key={log.id || log.time + log.message}><time>{log.time}</time><b className={tone(log.level.toLowerCase())}>{log.level}</b><span>{log.service}</span><span>{log.message}</span></div>)}{!visible.length && <div className="empty log-empty">No correlated logs match this filter.</div>}</section>;
 }
 
-function RunsView({ runs, setRuns, workspace, notify, preview, query, setQuery, filters, openProof }) {
+function RunsView({ runs, setRuns, workspace, notify, preview, query, setQuery, filters, openProof, targetRunId, alertContext }) {
   const [selectedId, setSelectedId] = useState(runs[0]?.id);
   const [busy, setBusy] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [note, setNote] = useState("");
   const selected = runs.find((run) => run.id === selectedId) || runs[0];
+  useEffect(() => { if (targetRunId) setSelectedId(targetRunId); }, [targetRunId]);
   const filtered = useMemo(() => runs.filter((run) => `${run.id} ${run.traceId} ${run.agent} ${run.scenario} ${run.user}`.toLowerCase().includes(query.toLowerCase()) && (filters.status === "all" || run.status === filters.status) && (filters.agent === "all" || run.agent === filters.agent)), [runs, query, filters]);
   const refresh = async () => { setBusy(true); try { setRuns(await listRuns(workspace.id, preview)); notify("Runs refreshed"); } catch (error) { notify(error.message, "error"); } finally { setBusy(false); } };
   const create = async (scenario) => { setBusy(true); try { const made = await createDemoRun(scenario, preview); const next = supabase && !preview ? await listRuns(workspace.id, false) : [made, ...runs.filter((run) => run.id !== made.id)]; setRuns(next); setSelectedId(supabase && !preview ? next[0].id : made.id); notify("Demo run created and correlated"); } catch (error) { notify(error.message, "error"); } finally { setBusy(false); } };
   const showNote = async () => { try { setNote(await getNote(selected.databaseId || selected.id, preview)); setNoteOpen(true); } catch (error) { notify(error.message, "error"); } };
   const persistNote = async () => { try { await saveNote(selected.databaseId || selected.id, note, preview); setNoteOpen(false); notify("Investigation note saved"); } catch (error) { notify(error.message, "error"); } };
   if (!selected) return <div className="empty">No runs have been recorded yet.</div>;
-  return <><div className="page-heading"><div><h1><Play size={21}/>Agent runs</h1><p>Prove root cause across correlated traces, metrics, and logs.</p></div><ScenarioMenu create={create} busy={busy}/></div><div className="workbench"><RunList runs={filtered} selected={selected} select={setSelectedId} query={query} setQuery={setQuery} refresh={refresh} busy={busy}/><Inspector run={selected} openNote={showNote} openProof={openProof} notify={notify}/></div><Timeline run={selected}/><Logs run={selected} notify={notify}/>{noteOpen && <div className="modal-backdrop" onMouseDown={() => setNoteOpen(false)}><div className="modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}><div><h2>Investigation note</h2><button aria-label="Close note" className="icon-button" onClick={() => setNoteOpen(false)}><X size={18}/></button></div><p>Capture context and handoff details for <b>{selected.id}</b>.</p><textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="What did you find? What should happen next?" autoFocus/><footer><button className="secondary" onClick={() => setNoteOpen(false)}>Cancel</button><button className="primary" onClick={persistNote}>Save note</button></footer></div></div>}</>;
+  return <><div className="page-heading"><div><h1><Play size={21}/>Agent runs</h1><p>Prove root cause across correlated traces, metrics, and logs.</p></div><ScenarioMenu create={create} busy={busy}/></div><div className="workbench"><RunList runs={filtered} selected={selected} select={setSelectedId} query={query} setQuery={setQuery} refresh={refresh} busy={busy}/><Inspector run={selected} openNote={showNote} openProof={openProof} notify={notify} alertContext={alertContext}/></div><Timeline run={selected}/><Logs run={selected} notify={notify}/>{noteOpen && <div className="modal-backdrop" onMouseDown={() => setNoteOpen(false)}><div className="modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}><div><h2>Investigation note</h2><button aria-label="Close note" className="icon-button" onClick={() => setNoteOpen(false)}><X size={18}/></button></div><p>Capture context and handoff details for <b>{selected.id}</b>.</p><textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="What did you find? What should happen next?" autoFocus/><footer><button className="secondary" onClick={() => setNoteOpen(false)}>Cancel</button><button className="primary" onClick={persistNote}>Save note</button></footer></div></div>}</>;
 }
 
 function Overview({ runs, openRuns, openProof }) {
-  const failed = runs.filter((run) => run.status === "failed").length;
-  const avg = runs.reduce((sum, run) => sum + run.latency, 0) / Math.max(runs.length, 1);
-  const tokens = runs.reduce((sum, run) => sum + run.tokens, 0);
-  return <><div className="page-heading"><div><h1><LayoutDashboard size={21}/>Overview</h1><p>Operational health across your AI agent fleet.</p></div><div className="heading-actions"><button className="secondary" onClick={openProof}><RadioTower size={15}/>SigNoz proof</button><button className="primary" onClick={openRuns}>Investigate runs<ChevronRight size={16}/></button></div></div><div className="overview-metrics">{[["Runs observed", runs.length, "Last 24 hours", Activity], ["Failed runs", failed, failed ? "Needs attention" : "Healthy", XCircle], ["Average latency", `${avg.toFixed(2)}s`, "Across all agents", Gauge], ["Total tokens", tokens.toLocaleString(), "Estimated usage", Bot]].map(([label, value, detail, Icon]) => <div key={label}><span><Icon size={17}/>{label}</span><strong>{value}</strong><small>{detail}</small></div>)}</div><section className="overview-list panel"><div className="section-bar"><strong>Recent issues</strong><button onClick={openRuns}>View all<ChevronRight size={14}/></button></div>{runs.map((run) => <button key={run.id} onClick={openRuns}><span className={`incident ${tone(run.status)}`}>{run.status === "failed" ? <X size={14}/> : <AlertTriangle size={14}/>}</span><span><strong>{run.scenario}</strong><small>{run.agent} · {run.id}</small></span><span className={`status ${tone(run.status)}`}><i/>{run.status}</span><time>{run.startTime}</time><ChevronRight size={15}/></button>)}</section></>;
+  const successRate = runs.filter((run) => run.status === "completed").length / Math.max(runs.length, 1) * 100;
+  const sortedLatency = [...runs].map((run) => run.latency).sort((a, b) => a - b);
+  const p95 = sortedLatency[Math.max(0, Math.ceil(sortedLatency.length * 0.95) - 1)] || 0;
+  const toolReliability = runs.filter((run) => !run.spans.some((span) => span.status === "error")).length / Math.max(runs.length, 1) * 100;
+  const tokenCompliance = runs.filter((run) => run.tokens <= 12000).length / Math.max(runs.length, 1) * 100;
+  const retrievalCompliance = runs.filter((run) => run.retrieval >= 0.3).length / Math.max(runs.length, 1) * 100;
+  const slos = [
+    ["Run success", `${successRate.toFixed(0)}%`, "Target >= 99%", successRate >= 99 ? "ok" : "danger"],
+    ["p95 latency", `${p95.toFixed(2)}s`, "Target < 10s", p95 < 10 ? "ok" : "danger"],
+    ["Tool reliability", `${toolReliability.toFixed(0)}%`, "Target >= 99.5%", toolReliability >= 99.5 ? "ok" : "danger"],
+    ["Token compliance", `${tokenCompliance.toFixed(0)}%`, "Budget <= 12k", tokenCompliance === 100 ? "ok" : "warn"],
+    ["Retrieval quality", `${retrievalCompliance.toFixed(0)}%`, "Score >= 0.30", retrievalCompliance === 100 ? "ok" : "warn"]
+  ];
+  return <><div className="page-heading"><div><h1><LayoutDashboard size={21}/>Operational SLOs</h1><p>Guardrail health across the same traces, metrics, and logs used in investigations.</p></div><div className="heading-actions"><button className="secondary" onClick={openProof}><RadioTower size={15}/>SigNoz proof</button><button className="primary" onClick={openRuns}>Investigate runs<ChevronRight size={16}/></button></div></div><section className="slo-band panel"><div className="section-bar"><strong>Last 24 hours</strong><span><RadioTower size={13}/>OpenTelemetry-derived</span></div><div className="slo-grid">{slos.map(([label, value, target, kind]) => <div key={label}><span><i className={kind}/>{label}</span><strong className={kind}>{value}</strong><small>{target}</small></div>)}</div></section><section className="overview-list panel"><div className="section-bar"><strong>Recent issues</strong><button onClick={openRuns}>View all<ChevronRight size={14}/></button></div>{runs.map((run) => <button key={run.id} onClick={openRuns}><span className={`incident ${tone(run.status)}`}>{run.status === "failed" ? <X size={14}/> : <AlertTriangle size={14}/>}</span><span><strong>{run.scenario}</strong><small>{run.agent} / {run.id}</small></span><span className={`status ${tone(run.status)}`}><i/>{run.status}</span><time>{run.startTime}</time><ChevronRight size={15}/></button>)}</section></>;
 }
 
-function AlertsView({ alerts, setAlerts, notify, preview, openProof }) {
+function AlertsView({ alerts, setAlerts, notify, preview, openProof, onInvestigate, runs }) {
   const change = async (alert) => { const enabled = !alert.enabled; setAlerts((items) => items.map((item) => item.id === alert.id ? { ...item, enabled } : item)); try { await toggleAlert(alert.id, enabled, preview); notify(enabled ? "Alert enabled" : "Alert paused"); } catch (error) { notify(error.message, "error"); } };
-  return <><div className="page-heading"><div><h1><Bell size={21}/>Alerts</h1><p>Guardrails derived from the same telemetry used during investigation.</p></div><button className="secondary" onClick={openProof}><RadioTower size={15}/>View deployed rules</button></div><section className="alerts-table panel"><div className="alert-row head"><span>Rule</span><span>Metric</span><span>Threshold</span><span>Severity</span><span>State</span><span/></div>{alerts.map((alert) => <div className="alert-row" key={alert.id}><span><strong>{alert.name}</strong><small>Evaluates every minute</small></span><code>{alert.metric}</code><span>{alert.threshold}</span><span className={tone(alert.severity)}>{alert.severity}</span><span>{alert.enabled ? "Active" : "Paused"}</span><button aria-label={`${alert.enabled ? "Pause" : "Enable"} ${alert.name}`} className={`toggle ${alert.enabled ? "on" : ""}`} onClick={() => change(alert)}><i/></button></div>)}</section></>;
+  const scenarioFor = (alert) => ({ "agentscope.tool.calls": "Tool failure", "agentscope.agent.tokens_per_run.max": "Token spike", "agentscope.retrieval.score.min": "Retrieval miss", "agentscope.agent.duration.max": "Tool failure" })[alert.metric] || ({ "tool-errors": "Tool failure", "token-budget": "Token spike", "retrieval-quality": "Retrieval miss", "run-latency": "Tool failure" })[alert.id];
+  return <><div className="page-heading"><div><h1><Bell size={21}/>Alerts</h1><p>Guardrails derived from the same telemetry used during investigation.</p></div><button className="secondary" onClick={openProof}><RadioTower size={15}/>View deployed rules</button></div><section className="alerts-table panel"><div className="alert-row head"><span>Rule</span><span>Metric</span><span>Threshold</span><span>Severity</span><span>State</span><span>Affected</span><span/></div>{alerts.map((alert) => { const affected = runs.filter((run) => run.scenario === scenarioFor(alert)); return <div className="alert-row" key={alert.id}><span><strong>{alert.name}</strong><small>Evaluates every minute</small></span><code>{alert.metric}</code><span>{alert.threshold}</span><span className={tone(alert.severity)}>{alert.severity}</span><span>{alert.enabled ? "Active" : "Paused"}</span><span>{affected.length} run{affected.length === 1 ? "" : "s"}</span><span className="alert-actions"><button className="alert-investigate" disabled={!affected.length} onClick={() => onInvestigate(alert, affected[0])}>Investigate<ArrowRight size={13}/></button><button aria-label={`${alert.enabled ? "Pause" : "Enable"} ${alert.name}`} className={`toggle ${alert.enabled ? "on" : ""}`} onClick={() => change(alert)}><i/></button></span></div>; })}</section></>;
 }
 
 function TeamView({ user, workspace, preview }) {
@@ -204,7 +270,17 @@ function Product({ user, preview }) {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState({ status: "all", agent: "all" });
   const [proofOpen, setProofOpen] = useState(false);
+  const [investigation, setInvestigation] = useState(null);
   const notify = (message, kind = "success") => { setToast({ message, kind }); window.setTimeout(() => setToast(null), 3200); };
+  const changeView = (next) => { setView(next); if (next !== "runs") setInvestigation(null); };
+  const openAlertInvestigation = (alert, run) => {
+    if (!run) return;
+    setInvestigation({ runId: run.id, alert });
+    setQuery("");
+    setFilters({ status: "all", agent: "all" });
+    setView("runs");
+    notify(`Opened ${run.id} from ${alert.name}`);
+  };
 
   useEffect(() => {
     let active = true;
@@ -222,20 +298,20 @@ function Product({ user, preview }) {
     return () => { active = false; };
   }, [preview]);
 
-  return <main className="app-shell"><Sidebar view={view} setView={setView} workspace={workspace} open={mobile} close={() => setMobile(false)} runs={runs} filters={filters} setFilters={setFilters} alertCount={alerts.filter((alert) => alert.enabled).length}/>{mobile && <div className="scrim" onClick={() => setMobile(false)}/>}<div className="workspace"><Topbar user={user} preview={preview} workspace={workspace} openMenu={() => setMobile(true)} query={query} setQuery={setQuery} openProof={() => setProofOpen(true)} showRuns={() => setView("runs")}/><div className="content">{loading ? <div className="loading"><LoaderCircle className="spin" size={26}/>Loading workspace telemetry...</div> : view === "overview" ? <Overview runs={runs} openRuns={() => setView("runs")} openProof={() => setProofOpen(true)}/> : view === "alerts" ? <AlertsView alerts={alerts} setAlerts={setAlerts} notify={notify} preview={preview} openProof={() => setProofOpen(true)}/> : view === "team" ? <TeamView user={user} workspace={workspace} preview={preview}/> : <RunsView runs={runs} setRuns={setRuns} workspace={workspace} notify={notify} preview={preview} query={query} setQuery={setQuery} filters={filters} openProof={() => setProofOpen(true)}/>}</div></div>{proofOpen && <ProofModal close={() => setProofOpen(false)}/>} {toast && <div className={`toast ${toast.kind}`}><CheckCircle2 size={17}/>{toast.message}</div>}</main>;
+  return <main className="app-shell"><Sidebar view={view} setView={changeView} workspace={workspace} open={mobile} close={() => setMobile(false)} runs={runs} filters={filters} setFilters={setFilters} alertCount={alerts.filter((alert) => alert.enabled).length}/>{mobile && <div className="scrim" onClick={() => setMobile(false)}/>}<div className="workspace"><Topbar user={user} preview={preview} workspace={workspace} openMenu={() => setMobile(true)} query={query} setQuery={setQuery} openProof={() => setProofOpen(true)} showRuns={() => { setView("runs"); setInvestigation(null); }}/><div className="content">{loading ? <div className="loading"><LoaderCircle className="spin" size={26}/>Loading workspace telemetry...</div> : view === "overview" ? <Overview runs={runs} openRuns={() => { setView("runs"); setInvestigation(null); }} openProof={() => setProofOpen(true)}/> : view === "alerts" ? <AlertsView alerts={alerts} setAlerts={setAlerts} notify={notify} preview={preview} openProof={() => setProofOpen(true)} onInvestigate={openAlertInvestigation} runs={runs}/> : view === "team" ? <TeamView user={user} workspace={workspace} preview={preview}/> : <RunsView runs={runs} setRuns={setRuns} workspace={workspace} notify={notify} preview={preview} query={query} setQuery={setQuery} filters={filters} openProof={() => setProofOpen(true)} targetRunId={investigation?.runId} alertContext={investigation?.alert}/>}</div></div>{proofOpen && <ProofModal close={() => setProofOpen(false)}/>} {toast && <div className={`toast ${toast.kind}`}><CheckCircle2 size={17}/>{toast.message}</div>}</main>;
 }
 
 function Root() {
   const judgeMode = new URLSearchParams(window.location.search).get("demo") === "1";
   const [session, setSession] = useState(null);
   const [preview, setPreview] = useState(!supabase || judgeMode);
-  const [checking, setChecking] = useState(Boolean(supabase));
+  const [checking, setChecking] = useState(Boolean(supabase && !judgeMode));
   useEffect(() => {
-    if (!supabase) return;
+    if (!supabase || judgeMode) return;
     supabase.auth.getSession().then(({ data }) => { setSession(data.session); setChecking(false); });
     const { data } = supabase.auth.onAuthStateChange((_event, next) => setSession(next));
     return () => data.subscription.unsubscribe();
-  }, []);
+  }, [judgeMode]);
   if (checking) return <main className="boot"><Activity size={28}/><span>AgentScope Sidekick</span><LoaderCircle className="spin" size={18}/></main>;
   if (!session && !preview) return <AuthScreen onPreview={() => setPreview(true)}/>;
   return <Product user={session?.user} preview={!session || preview}/>;

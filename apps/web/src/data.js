@@ -2,6 +2,7 @@ export const agentRuns = [
   {
     id: "run_7f3a1c9d",
     traceId: "a1b2c3d",
+    capturedAt: "2026-07-23T10:24:44+05:30",
     scenario: "Tool failure",
     status: "failed",
     agent: "ResearchAgent",
@@ -14,6 +15,7 @@ export const agentRuns = [
     cost: 0.021,
     tools: "3/3",
     retrieval: 0.62,
+    baseline: { id: "baseline_research_24h", sampleSize: 42, latency: 4.18, tokens: 2190, retrieval: 0.67, cost: 0.019, toolErrors: 0 },
     summary: "The run failed because the search_docs tool returned HTTP 500 after one attempt.",
     nextActions: [
       "Check upstream availability for the document search service.",
@@ -23,7 +25,7 @@ export const agentRuns = [
     spans: [
       { name: "ResearchAgent.run", service: "agent", start: 0.2, duration: 12.48, status: "ok" },
       { name: "LLM(gpt-4o-mini)", service: "llm", start: 0.6, duration: 9.63, status: "ok" },
-      { name: "tool.search_docs", service: "tool", start: 1.2, duration: 2.41, status: "error" },
+      { id: "span_a11f0c03", name: "tool.search_docs", service: "tool", start: 1.2, duration: 2.41, status: "error" },
       { name: "tool.get_webpage", service: "tool", start: 3.8, duration: 1.12, status: "ok" },
       { name: "tool.summarize", service: "tool", start: 5.2, duration: 3.09, status: "ok" },
       { name: "vector_db.query", service: "retrieval", start: 3.4, duration: 0.66, status: "ok" },
@@ -39,6 +41,7 @@ export const agentRuns = [
   {
     id: "run_2c8b4e7a",
     traceId: "d4e5f6a",
+    capturedAt: "2026-07-23T09:58:18+05:30",
     scenario: "Retrieval miss",
     status: "completed",
     agent: "AnalystAgent",
@@ -51,6 +54,7 @@ export const agentRuns = [
     cost: 0.011,
     tools: "1/2",
     retrieval: 0.18,
+    baseline: { id: "baseline_analyst_24h", sampleSize: 36, latency: 2.94, tokens: 1310, retrieval: 0.71, cost: 0.012, toolErrors: 0 },
     summary: "The agent completed, but retrieval confidence was low and only one source was used.",
     nextActions: [
       "Tune embedding filters for the finance corpus.",
@@ -59,7 +63,7 @@ export const agentRuns = [
     ],
     spans: [
       { name: "AnalystAgent.run", service: "agent", start: 0.1, duration: 3.21, status: "ok" },
-      { name: "vector_db.query", service: "retrieval", start: 0.4, duration: 0.42, status: "warn" },
+      { id: "span_d42e0a02", name: "vector_db.query", service: "retrieval", start: 0.4, duration: 0.42, status: "warn" },
       { name: "LLM(gpt-4o-mini)", service: "llm", start: 0.9, duration: 1.82, status: "ok" },
       { name: "response.format", service: "agent", start: 2.8, duration: 0.22, status: "ok" }
     ],
@@ -71,6 +75,7 @@ export const agentRuns = [
   {
     id: "run_9d7e6b11",
     traceId: "f7a8b9c",
+    capturedAt: "2026-07-23T09:31:52+05:30",
     scenario: "Token spike",
     status: "completed",
     agent: "PlannerAgent",
@@ -83,6 +88,7 @@ export const agentRuns = [
     cost: 0.182,
     tools: "2/2",
     retrieval: 0.74,
+    baseline: { id: "baseline_planner_24h", sampleSize: 28, latency: 4.92, tokens: 5480, retrieval: 0.72, cost: 0.054, toolErrors: 0 },
     summary: "The run succeeded, but context packing caused an abnormal token and cost spike.",
     nextActions: [
       "Summarize retrieved context before the planner prompt.",
@@ -92,7 +98,7 @@ export const agentRuns = [
     spans: [
       { name: "PlannerAgent.run", service: "agent", start: 0.1, duration: 6.74, status: "ok" },
       { name: "retrieval.expand_context", service: "retrieval", start: 0.6, duration: 1.74, status: "ok" },
-      { name: "LLM(gpt-4o-mini)", service: "llm", start: 2.4, duration: 3.82, status: "warn" },
+      { id: "span_f78b0d03", name: "LLM(gpt-4o-mini)", service: "llm", start: 2.4, duration: 3.82, status: "warn" },
       { name: "response.format", service: "agent", start: 6.2, duration: 0.32, status: "ok" }
     ],
     logs: [

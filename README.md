@@ -1,5 +1,7 @@
 # AgentScope Sidekick
 
+[![Track 1 verification](https://github.com/phanixdev/agentscope-sidekick/actions/workflows/verify.yml/badge.svg)](https://github.com/phanixdev/agentscope-sidekick/actions/workflows/verify.yml)
+
 **Live judge demo:** https://agentscope-sidekick.vercel.app/?demo=1
 **Authenticated product:** https://agentscope-sidekick.vercel.app
 **Source:** https://github.com/phanixdev/agentscope-sidekick
@@ -9,10 +11,11 @@ AgentScope Sidekick is a production-shaped AI agent observability product for Tr
 ## Judge It in 90 Seconds
 
 1. Open the [one-click judge demo](https://agentscope-sidekick.vercel.app/?demo=1). No account or email confirmation is required.
-2. Select the failed `Tool failure` run and open **Evidence**.
-3. Inspect the failed span, threshold breach, correlated log, trace ID, and computed confidence.
-4. Choose **View SigNoz proof** to see the captured failing trace, native dashboard, and deployed alert rules.
-5. Create a `Retrieval miss` or `Token spike` run to verify that the diagnosis and evidence change with telemetry.
+2. Select the failed `Tool failure` run and inspect **Explain**: confidence is backed by three visible corroborating signals.
+3. Open **Evidence** to verify the trace ID, anomalous span ID, capture time, metric query, threshold, and correlated log.
+4. Open **Compare** to see the first divergent span against a 24-hour healthy peer baseline.
+5. In **Alerts**, choose **Investigate** on a breached guardrail to deep-link into its affected run and evidence.
+6. Choose **View SigNoz proof** for the captured failing trace, native dashboard, deployed alerts, MCP JSON, metric API response, and Terraform apply output.
 The hosted judge workspace is deliberately zero-friction and uses deterministic demo data. Authenticated production workspaces persist under Supabase RLS. The reproducible Foundry stack emits and queries the real traces, metrics, and logs shown below.
 
 ## Live SigNoz Proof
@@ -46,12 +49,20 @@ The verified stack ingested **14 spans**, **8 trace-correlated logs**, every cus
 ## Winning Track 1 Story
 
 1. Trigger a realistic bad agent run.
-2. Isolate the root cause in a trace-first run explorer.
-3. Correlate the failed span with metrics and logs.
-4. Save the investigation handoff.
-5. Show the matching SigNoz alert guardrail.
+2. Open the breached SigNoz guardrail and deep-link to its affected run.
+3. Correlate the anomalous span, metric threshold, and trace-matched log.
+4. Compare the incident with a healthy 24-hour peer baseline and isolate the first divergent span.
+5. Save the investigation handoff and inspect the matching SigNoz execution proof.
 
-The diagnosis is deterministic and never invents a cause. Its confidence score is derived from the available anomaly signals, and every conclusion exposes the trace ID, failed or warning span, threshold comparison, and correlated log used as evidence.
+The diagnosis is deterministic and never invents a cause. The UI shows `3/3 signals corroborated`, exposes the confidence formula, and links every conclusion to the trace ID, span ID, metric query, capture time, threshold comparison, and correlated log used as evidence.
+
+### Judge-visible differentiation
+
+- **Alert to root cause in two clicks:** every guardrail opens the matching run with breached metric context.
+- **Regression comparison:** duration, tokens, retrieval quality, and cost are compared with healthy peer baselines.
+- **Auditable confidence:** a readable signal count is primary; the numeric score is secondary and formula-backed.
+- **Operational SLOs:** run success, p95 latency, tool reliability, token compliance, and retrieval quality share one telemetry source.
+- **Proof without trust:** screenshots are paired with raw MCP, SigNoz API, ClickHouse, and Terraform artifacts.
 
 ## Complete Product
 
@@ -141,7 +152,7 @@ npm.cmd run check
 .\scripts\verify_demo.ps1
 ```
 
-The test suite covers explanations, dynamic incidents, Foundry artifacts, dashboard schema, alert rules, and all-signal OpenTelemetry evidence. Browser QA covers authenticated sign-in, transactional onboarding, demo-run creation, investigation notes, alerts, desktop, and mobile layouts.
+The 26-test suite covers explanations, dynamic incidents, confidence provenance, healthy baselines, alert deep links, Supabase RLS contracts, Foundry artifacts, dashboard schema, alert rules, and all-signal OpenTelemetry evidence. GitHub Actions runs the production build and complete suite on every push and pull request. Browser QA covers authenticated sign-in, transactional onboarding, demo-run creation, investigation notes, alerts, desktop, and mobile layouts.
 
 ## Security
 

@@ -3,11 +3,19 @@ import { supabase } from "./supabase";
 
 const localNotesKey = "agentscope-investigation-notes";
 
+const healthyBaselines = {
+  "Tool failure": { id: "baseline_research_24h", sampleSize: 42, latency: 4.18, tokens: 2190, retrieval: 0.67, cost: 0.019, toolErrors: 0 },
+  "Retrieval miss": { id: "baseline_analyst_24h", sampleSize: 36, latency: 2.94, tokens: 1310, retrieval: 0.71, cost: 0.012, toolErrors: 0 },
+  "Token spike": { id: "baseline_planner_24h", sampleSize: 28, latency: 4.92, tokens: 5480, retrieval: 0.72, cost: 0.054, toolErrors: 0 }
+};
+
 function fromDatabase(run) {
   return {
     id: run.run_key,
     databaseId: run.id,
     traceId: run.trace_id,
+    capturedAt: run.started_at,
+    baseline: healthyBaselines[run.scenario],
     scenario: run.scenario,
     status: run.status,
     agent: run.agent_name,
