@@ -109,7 +109,7 @@ class InfraArtifactTests(unittest.TestCase):
         checklist = (ROOT / "docs/judging-checklist.md").read_text(encoding="utf-8")
         self.assertIn("Track 1", submission)
         self.assertIn("OpenTelemetry", submission)
-        self.assertIn("3-Minute Demo Script", demo_script)
+        self.assertIn("90-Second Track 1 Demo Script", demo_script)
         self.assertIn("Best use of SigNoz", checklist)
 
 

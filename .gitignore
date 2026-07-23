@@ -11,3 +11,7 @@ __pycache__/
 .env.local
 .env.*.local
 .vercel
+
+.video-tools/
+output/video/*
+!output/video/agentscope-sidekick-track1.mp4

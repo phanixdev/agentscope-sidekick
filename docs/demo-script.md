@@ -1,60 +1,47 @@
-# 3-Minute Demo Script
+# 90-Second Track 1 Demo Script
 
-## 0:00 - 0:20: Frame the problem
+## 0:00 - 0:10: The operational problem
 
-"AI agents are not a single request anymore. They retrieve context, call tools, make LLM requests, retry, and format responses. When something goes wrong, teams need to see inside the run, not guess from the final answer."
+"An agent can return one answer while hiding retrieval, tool calls, LLM work, retries, latency, and cost. AgentScope Sidekick turns that execution into an incident workflow backed by SigNoz and OpenTelemetry."
 
-## 0:20 - 0:40: Establish SigNoz proof
+Show the product run list and select the failed `Tool failure` run.
 
-Open SigNoz at http://127.0.0.1:8080. Show the imported AgentScope Sidekick - AI Agent Observability dashboard, then open the agentscope-demo-agent service and one recent trace. Mention that the same Foundry deployment also runs the SigNoz MCP server at port `8000`.
+## 0:10 - 0:25: Prove the telemetry is real
 
-Say:
+Show the live SigNoz trace proof, then the dashboard and alert proof.
 
-"Foundry reproduces this entire stack. The agent sends traces, metrics, and logs through OTLP, and its error logs carry the same trace and span IDs as the failing operation."
+"One trace crosses the API, agent, retrieval, tool gateway, LLM gateway, and persistence. The failing tool span, latency metric, and HTTP 500 log share correlated trace evidence."
 
-## 0:40 - 1:10: Show the Sidekick
+## 0:25 - 0:45: Explain without inventing
 
-Open the deployed AgentScope Sidekick and choose **Explore judge demo**. Point out the run list, computed confidence, cited evidence, trace timeline, and correlated logs. Use **View SigNoz proof** before returning to the live local SigNoz trace.
+Return to **Explain**, then open **Evidence**.
 
-## 1:10 - 1:45: Explain a tool failure
+"The diagnosis is deterministic. Three out of three signals corroborate the root cause: the failed `search_docs` span, a run above the ten-second latency guardrail, and the trace-correlated HTTP 500 log. The evidence panel exposes the rule ID, version, metric query, span ID, and confirms that no LLM is in the decision path."
 
-Click `Tool failure`, then `Explain Run`.
+## 0:45 - 0:58: Compare honestly
 
-Say:
+Open **Compare**.
 
-"`search_docs` returns HTTP 500. The Sidekick does not invent a root cause; it cites the error span, trace ID, token count, retrieval score, and correlated log, then gives operational next steps."
+"Judge mode clearly labels its fixed reference cohort. Authenticated workspaces instead compute tenant-scoped healthy baselines from completed Supabase runs, with a minimum-sample gate and row-level security."
 
-Show the red `tool.search_docs` span and the HTTP 500 log. Briefly return to SigNoz and filter by the new trace ID if time permits.
+## 0:58 - 1:18: Close the loop
 
-## 1:45 - 2:10: Separate quality from failure
+Open **Remediate** and choose **Apply and run verification**.
 
-Click `Retrieval miss`.
+"Sidekick does not stop at a recommendation. It applies the selected action, creates a correlated rerun, and verifies latency, tokens, retrieval quality, cost, and tool guardrails."
 
-Say:
+Pause on **Remediation verified** and the before/after table.
 
-"This run completes, but retrieval confidence is below 0.3. Observability identifies weak context as the risk instead of blaming the model or a tool."
+## 1:18 - 1:30: Track 1 close
 
-Show score below `0.3`, `1 / 5` results used, and the source-diversity action.
+Show the architecture flow and finish on the production product.
 
-## 2:10 - 2:35: Catch invisible cost risk
+"This is Track 1 observability as a complete product: OpenTelemetry-native traces, metrics, and logs in SigNoz; evidence-backed diagnosis; secure multi-tenant persistence; and a verified remediation loop."
 
-Click `Token spike`.
+## Recording Notes
 
-Say:
-
-"This run succeeds but uses 18,642 tokens. Success-only monitoring misses it; the token metric and budget alert do not."
-
-Show the token card, GenAI attributes, and the provisioned AgentScope: token budget exceeded alert.
-
-## 2:35 - 2:50: Show reproducibility
-
-Open `infra/casting.yaml` and `infra/pours/deployment/compose.yaml`.
-
-Say:
-
-"The official Foundry casting installs SigNoz and MCP, then adds the Sidekick API, web UI, and demo agent. The generated lock makes the deployment reproducible for judges."
-
-## 2:50 - 3:00: Close with Track 1 fit
-
-"AgentScope Sidekick makes observability the product workflow. Traces explain execution, metrics expose latency and cost, logs correlate failures, and SigNoz dashboards, alerts, and MCP turn that telemetry into action."
-
+- Record at 1920x1080 and export as MP4.
+- Keep the cursor normal and out of the evidence text.
+- Use direct cuts between proof screens; avoid zoom effects and decorative transitions.
+- Keep production and repository URLs readable in the final frame.
+- Do not claim the deterministic judge cohort is live telemetry.

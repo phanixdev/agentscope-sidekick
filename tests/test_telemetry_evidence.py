@@ -12,17 +12,15 @@ EVIDENCE = ROOT / "output" / "telemetry" / "otel-all-signals.txt"
 class TelemetryEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
-        with EVIDENCE.open("w", encoding="utf-8") as handle:
-            subprocess.run(
-                [sys.executable, "-m", "scripts.capture_canonical_trace"],
-                cwd=ROOT,
-                stdout=handle,
-                stderr=subprocess.STDOUT,
-                check=True,
-                text=True,
-            )
-        cls.text = EVIDENCE.read_text(encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, "-m", "scripts.capture_canonical_trace"],
+            cwd=ROOT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=True,
+            text=True,
+        )
+        cls.text = result.stdout
 
     def test_real_opentelemetry_span_output_is_captured(self):
         self.assertIn('"telemetry.sdk.name": "opentelemetry"', self.text)
