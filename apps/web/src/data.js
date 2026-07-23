@@ -15,7 +15,7 @@ export const agentRuns = [
     cost: 0.021,
     tools: "3/3",
     retrieval: 0.62,
-    baseline: { id: "baseline_research_24h", sampleSize: 42, latency: 4.18, tokens: 2190, retrieval: 0.67, cost: 0.019, toolErrors: 0 },
+    baseline: { id: "reference_research_v1", kind: "reference", source: "Versioned judge fixture", windowLabel: "Fixed reference cohort", fallbackReason: "Judge mode uses a deterministic comparison cohort.", sampleSize: 42, latency: 4.18, tokens: 2190, retrieval: 0.67, cost: 0.019, toolErrors: 0 },
     summary: "The run failed because the search_docs tool returned HTTP 500 after one attempt.",
     nextActions: [
       "Check upstream availability for the document search service.",
@@ -54,7 +54,7 @@ export const agentRuns = [
     cost: 0.011,
     tools: "1/2",
     retrieval: 0.18,
-    baseline: { id: "baseline_analyst_24h", sampleSize: 36, latency: 2.94, tokens: 1310, retrieval: 0.71, cost: 0.012, toolErrors: 0 },
+    baseline: { id: "reference_analyst_v1", kind: "reference", source: "Versioned judge fixture", windowLabel: "Fixed reference cohort", fallbackReason: "Judge mode uses a deterministic comparison cohort.", sampleSize: 36, latency: 2.94, tokens: 1310, retrieval: 0.71, cost: 0.012, toolErrors: 0 },
     summary: "The agent completed, but retrieval confidence was low and only one source was used.",
     nextActions: [
       "Tune embedding filters for the finance corpus.",
@@ -88,7 +88,7 @@ export const agentRuns = [
     cost: 0.182,
     tools: "2/2",
     retrieval: 0.74,
-    baseline: { id: "baseline_planner_24h", sampleSize: 28, latency: 4.92, tokens: 5480, retrieval: 0.72, cost: 0.054, toolErrors: 0 },
+    baseline: { id: "reference_planner_v1", kind: "reference", source: "Versioned judge fixture", windowLabel: "Fixed reference cohort", fallbackReason: "Judge mode uses a deterministic comparison cohort.", sampleSize: 28, latency: 4.92, tokens: 5480, retrieval: 0.72, cost: 0.054, toolErrors: 0 },
     summary: "The run succeeded, but context packing caused an abnormal token and cost spike.",
     nextActions: [
       "Summarize retrieved context before the planner prompt.",

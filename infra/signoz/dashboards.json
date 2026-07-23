@@ -491,7 +491,7 @@
                         "yAxisUnit":  "none"
                     },
                     {
-                        "description":  "p95 end-to-end agent latency from the root ResearchAgent.run span.",
+                        "description":  "p95 end-to-end agent latency from the root invoke_agent ResearchAgent span.",
                         "id":  "728b5e6e-ae9a-4d8b-a1ef-036a37432436",
                         "isStacked":  false,
                         "nullZeroValues":  "zero",
@@ -530,7 +530,7 @@
                                                                                                  }
                                                                                              ],
                                                                             "filter":  {
-                                                                                           "expression":  "service.name = \u0027agentscope-demo-agent\u0027 AND name = \u0027ResearchAgent.run\u0027"
+                                                                                           "expression":  "service.name = \u0027agentscope-demo-agent\u0027 AND name = \u0027invoke_agent ResearchAgent\u0027"
                                                                                        }
                                                                         }
                                                                     ],

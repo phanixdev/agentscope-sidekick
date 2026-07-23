@@ -24,7 +24,7 @@ locals {
       threshold        = 0
       unit             = "none"
       summary          = "An AI-agent tool call failed"
-      description      = "Open the Sidekick run, pivot to its trace ID, and inspect tool.search_docs plus the correlated ERROR log."
+      description      = "Open the Sidekick run, pivot to its trace ID, and inspect execute_tool search_docs plus the correlated ERROR log."
     }
     token_budget = {
       alert            = "AgentScope: token budget exceeded"
@@ -50,7 +50,7 @@ locals {
       threshold        = 0.3
       unit             = "none"
       summary          = "Minimum retrieval confidence is below 0.3"
-      description      = "Inspect vector_db.query spans, source diversity, results used, and query filters."
+      description      = "Inspect query knowledge_chunks spans, source diversity, results used, and query filters."
     }
     latency_budget = {
       alert            = "AgentScope: agent latency above budget"

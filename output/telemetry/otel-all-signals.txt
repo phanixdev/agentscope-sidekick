@@ -1,25 +1,483 @@
-{'trace_id': 'c0d6ed116f623434821f76708ea6ac82', 'scenario': 'tool_failure', 'retrieval_score': 0.73, 'tool_status': 'error', 'tokens': 2341}
-{'trace_id': '150334ca71711077c2977e68b2f26727', 'scenario': 'retrieval_miss', 'retrieval_score': 0.18, 'tool_status': 'ok', 'tokens': 2341}
-{'trace_id': 'b27836379b883221e4c610c48e673038', 'scenario': 'token_spike', 'retrieval_score': 0.76, 'tool_status': 'ok', 'tokens': 18642}
 {
-    "name": "vector_db.query",
+    "name": "invoke_agent ResearchAgent",
     "context": {
-        "trace_id": "0xc0d6ed116f623434821f76708ea6ac82",
-        "span_id": "0x6bff00100df417a6",
+        "trace_id": "0xf6d914392aeac0773cbe6dbe80567647",
+        "span_id": "0x63aafaf8ac65ba61",
         "trace_state": "[]"
     },
     "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x2fc586deedcc1b87",
-    "start_time": "2026-07-23T03:51:53.636086Z",
-    "end_time": "2026-07-23T03:51:53.636318Z",
+    "parent_id": "0x0b2a61802f103f66",
+    "start_time": "2026-07-23T11:35:31.690392Z",
+    "end_time": "2026-07-23T11:35:31.692317Z",
+    "status": {
+        "status_code": "ERROR",
+        "description": "AgentScope scenario error"
+    },
+    "attributes": {
+        "gen_ai.operation.name": "invoke_agent",
+        "gen_ai.agent.name": "ResearchAgent",
+        "gen_ai.agent.id": "research-agent-v1",
+        "gen_ai.workflow.name": "agentscope-investigation",
+        "agentscope.scenario": "tool_failure",
+        "agentscope.trace_id": "f6d914392aeac0773cbe6dbe80567647",
+        "agentscope.duration_ms": 1,
+        "agentscope.status": "error"
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.44.0",
+            "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+            "service.name": "agentscope-demo-agent",
+            "service.namespace": "agentscope-sidekick",
+            "deployment.environment": "local-demo",
+            "hackathon.track": "ai-agent-observability"
+        },
+        "schema_url": ""
+    }
+}
+{
+    "resource_metrics": [
+        {
+            "resource": {
+                "attributes": {
+                    "telemetry.sdk.language": "python",
+                    "telemetry.sdk.name": "opentelemetry",
+                    "telemetry.sdk.version": "1.44.0",
+                    "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+                    "service.name": "agentscope-demo-agent",
+                    "service.namespace": "agentscope-sidekick",
+                    "deployment.environment": "local-demo",
+                    "hackathon.track": "ai-agent-observability"
+                },
+                "schema_url": ""
+            },
+            "scope_metrics": [
+                {
+                    "scope": {
+                        "name": "agentscope.demo_agent",
+                        "version": null,
+                        "schema_url": "",
+                        "attributes": null
+                    },
+                    "metrics": [
+                        {
+                            "name": "agentscope.tool.calls",
+                            "description": "",
+                            "unit": "{call}",
+                            "data": {
+                                "data_points": [
+                                    {
+                                        "attributes": {
+                                            "tool_name": "search_docs",
+                                            "status": "error"
+                                        },
+                                        "start_time_unix_nano": 1784806531691123600,
+                                        "time_unix_nano": 1784806531694720000,
+                                        "value": 1,
+                                        "exemplars": [
+                                            {
+                                                "filtered_attributes": {},
+                                                "value": 1,
+                                                "time_unix_nano": 1784806531691035500,
+                                                "span_id": 12851530382719516771,
+                                                "trace_id": 328117225558870866624394004718891202119
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "aggregation_temporality": 2,
+                                "is_monotonic": true
+                            }
+                        },
+                        {
+                            "name": "agentscope.agent.runs",
+                            "description": "",
+                            "unit": "{run}",
+                            "data": {
+                                "data_points": [
+                                    {
+                                        "attributes": {
+                                            "scenario": "tool_failure",
+                                            "agent_name": "ResearchAgent"
+                                        },
+                                        "start_time_unix_nano": 1784806531691687700,
+                                        "time_unix_nano": 1784806531694720000,
+                                        "value": 1,
+                                        "exemplars": [
+                                            {
+                                                "filtered_attributes": {},
+                                                "value": 1,
+                                                "time_unix_nano": 1784806531691634200,
+                                                "span_id": 7181828501746858593,
+                                                "trace_id": 328117225558870866624394004718891202119
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "aggregation_temporality": 2,
+                                "is_monotonic": true
+                            }
+                        },
+                        {
+                            "name": "agentscope.agent.tokens",
+                            "description": "",
+                            "unit": "{token}",
+                            "data": {
+                                "data_points": [
+                                    {
+                                        "attributes": {
+                                            "scenario": "tool_failure",
+                                            "agent_name": "ResearchAgent"
+                                        },
+                                        "start_time_unix_nano": 1784806531691752200,
+                                        "time_unix_nano": 1784806531694720000,
+                                        "value": 2341,
+                                        "exemplars": [
+                                            {
+                                                "filtered_attributes": {},
+                                                "value": 2341,
+                                                "time_unix_nano": 1784806531691726500,
+                                                "span_id": 7181828501746858593,
+                                                "trace_id": 328117225558870866624394004718891202119
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "aggregation_temporality": 2,
+                                "is_monotonic": true
+                            }
+                        },
+                        {
+                            "name": "agentscope.agent.tokens_per_run",
+                            "description": "",
+                            "unit": "{token}",
+                            "data": {
+                                "data_points": [
+                                    {
+                                        "attributes": {
+                                            "scenario": "tool_failure",
+                                            "agent_name": "ResearchAgent"
+                                        },
+                                        "start_time_unix_nano": 1784806531691926400,
+                                        "time_unix_nano": 1784806531694720000,
+                                        "count": 1,
+                                        "sum": 2341,
+                                        "bucket_counts": [
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            1,
+                                            0,
+                                            0,
+                                            0,
+                                            0
+                                        ],
+                                        "explicit_bounds": [
+                                            0.0,
+                                            5.0,
+                                            10.0,
+                                            25.0,
+                                            50.0,
+                                            75.0,
+                                            100.0,
+                                            250.0,
+                                            500.0,
+                                            750.0,
+                                            1000.0,
+                                            2500.0,
+                                            5000.0,
+                                            7500.0,
+                                            10000.0
+                                        ],
+                                        "min": 2341,
+                                        "max": 2341,
+                                        "exemplars": [
+                                            {
+                                                "filtered_attributes": {},
+                                                "value": 2341,
+                                                "time_unix_nano": 1784806531691779000,
+                                                "span_id": 7181828501746858593,
+                                                "trace_id": 328117225558870866624394004718891202119
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "aggregation_temporality": 2
+                            }
+                        },
+                        {
+                            "name": "agentscope.agent.duration",
+                            "description": "",
+                            "unit": "ms",
+                            "data": {
+                                "data_points": [
+                                    {
+                                        "attributes": {
+                                            "scenario": "tool_failure",
+                                            "agent_name": "ResearchAgent"
+                                        },
+                                        "start_time_unix_nano": 1784806531692020300,
+                                        "time_unix_nano": 1784806531694720000,
+                                        "count": 1,
+                                        "sum": 1.31,
+                                        "bucket_counts": [
+                                            0,
+                                            1,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0
+                                        ],
+                                        "explicit_bounds": [
+                                            0.0,
+                                            5.0,
+                                            10.0,
+                                            25.0,
+                                            50.0,
+                                            75.0,
+                                            100.0,
+                                            250.0,
+                                            500.0,
+                                            750.0,
+                                            1000.0,
+                                            2500.0,
+                                            5000.0,
+                                            7500.0,
+                                            10000.0
+                                        ],
+                                        "min": 1.31,
+                                        "max": 1.31,
+                                        "exemplars": [
+                                            {
+                                                "filtered_attributes": {},
+                                                "value": 1.31,
+                                                "time_unix_nano": 1784806531691981900,
+                                                "span_id": 7181828501746858593,
+                                                "trace_id": 328117225558870866624394004718891202119
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "aggregation_temporality": 2
+                            }
+                        },
+                        {
+                            "name": "agentscope.retrieval.score",
+                            "description": "",
+                            "unit": "1",
+                            "data": {
+                                "data_points": [
+                                    {
+                                        "attributes": {
+                                            "scenario": "tool_failure",
+                                            "agent_name": "ResearchAgent"
+                                        },
+                                        "start_time_unix_nano": 1784806531692090700,
+                                        "time_unix_nano": 1784806531694720000,
+                                        "count": 1,
+                                        "sum": 0.63,
+                                        "bucket_counts": [
+                                            0,
+                                            1,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            0
+                                        ],
+                                        "explicit_bounds": [
+                                            0.0,
+                                            5.0,
+                                            10.0,
+                                            25.0,
+                                            50.0,
+                                            75.0,
+                                            100.0,
+                                            250.0,
+                                            500.0,
+                                            750.0,
+                                            1000.0,
+                                            2500.0,
+                                            5000.0,
+                                            7500.0,
+                                            10000.0
+                                        ],
+                                        "min": 0.63,
+                                        "max": 0.63,
+                                        "exemplars": [
+                                            {
+                                                "filtered_attributes": {},
+                                                "value": 0.63,
+                                                "time_unix_nano": 1784806531692059000,
+                                                "span_id": 7181828501746858593,
+                                                "trace_id": 328117225558870866624394004718891202119
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "aggregation_temporality": 2
+                            }
+                        }
+                    ],
+                    "schema_url": ""
+                }
+            ],
+            "schema_url": ""
+        }
+    ]
+}
+{
+    "body": "retrieval completed",
+    "severity_number": 9,
+    "severity_text": "INFO",
+    "attributes": {
+        "retrieval_score": 0.63,
+        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
+        "code.function.name": "_emit_log",
+        "code.line.number": 227
+    },
+    "dropped_attributes": 0,
+    "timestamp": "2026-07-23T11:35:31.690555Z",
+    "observed_timestamp": "2026-07-23T11:35:31.690668Z",
+    "trace_id": "0xf6d914392aeac0773cbe6dbe80567647",
+    "span_id": "0xaf1a1b331792bc45",
+    "trace_flags": 3,
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.44.0",
+            "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+            "service.name": "agentscope-demo-agent",
+            "service.namespace": "agentscope-sidekick",
+            "deployment.environment": "local-demo",
+            "hackathon.track": "ai-agent-observability"
+        },
+        "schema_url": ""
+    },
+    "event_name": ""
+}
+{
+    "body": "search_docs returned HTTP 500",
+    "severity_number": 17,
+    "severity_text": "ERROR",
+    "attributes": {
+        "tool_name": "search_docs",
+        "http_status_code": 500,
+        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
+        "code.function.name": "_emit_log",
+        "code.line.number": 227
+    },
+    "dropped_attributes": 0,
+    "timestamp": "2026-07-23T11:35:31.691224Z",
+    "observed_timestamp": "2026-07-23T11:35:31.691288Z",
+    "trace_id": "0xf6d914392aeac0773cbe6dbe80567647",
+    "span_id": "0xb259cecaf2230063",
+    "trace_flags": 3,
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.44.0",
+            "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+            "service.name": "agentscope-demo-agent",
+            "service.namespace": "agentscope-sidekick",
+            "deployment.environment": "local-demo",
+            "hackathon.track": "ai-agent-observability"
+        },
+        "schema_url": ""
+    },
+    "event_name": ""
+}
+{
+    "body": "agent run completed",
+    "severity_number": 17,
+    "severity_text": "ERROR",
+    "attributes": {
+        "scenario": "tool_failure",
+        "trace_id": "f6d914392aeac0773cbe6dbe80567647",
+        "tool_status": "error",
+        "token_count": 2341,
+        "retrieval_score": 0.63,
+        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
+        "code.function.name": "_emit_log",
+        "code.line.number": 227
+    },
+    "dropped_attributes": 0,
+    "timestamp": "2026-07-23T11:35:31.692147Z",
+    "observed_timestamp": "2026-07-23T11:35:31.692192Z",
+    "trace_id": "0xf6d914392aeac0773cbe6dbe80567647",
+    "span_id": "0x63aafaf8ac65ba61",
+    "trace_flags": 3,
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.44.0",
+            "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+            "service.name": "agentscope-demo-agent",
+            "service.namespace": "agentscope-sidekick",
+            "deployment.environment": "local-demo",
+            "hackathon.track": "ai-agent-observability"
+        },
+        "schema_url": ""
+    },
+    "event_name": ""
+}
+{
+    "name": "query knowledge_chunks",
+    "context": {
+        "trace_id": "0xf6d914392aeac0773cbe6dbe80567647",
+        "span_id": "0xaf1a1b331792bc45",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.CLIENT",
+    "parent_id": "0x63aafaf8ac65ba61",
+    "start_time": "2026-07-23T11:35:31.690469Z",
+    "end_time": "2026-07-23T11:35:31.690848Z",
     "status": {
         "status_code": "UNSET"
     },
     "attributes": {
-        "db_system": "qdrant",
-        "otel_signal": "trace",
-        "retrieval_score": 0.73,
-        "results_used": 3,
+        "db.system.name": "qdrant",
+        "db.operation.name": "query",
+        "db.collection.name": "knowledge_chunks",
+        "server.address": "vector-db",
+        "gen_ai.operation.name": "retrieval",
+        "agentscope.retrieval.score": 0.63,
+        "agentscope.retrieval.results_used": 3,
+        "otel.signal": "trace",
         "agentscope.duration_ms": 0,
         "agentscope.status": "ok"
     },
@@ -30,34 +488,37 @@
             "telemetry.sdk.language": "python",
             "telemetry.sdk.name": "opentelemetry",
             "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
+            "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+            "service.name": "agentscope-retrieval",
             "service.namespace": "agentscope-sidekick",
             "deployment.environment": "local-demo",
             "hackathon.track": "ai-agent-observability"
         },
         "schema_url": ""
     }
-}
+}
 {
-    "name": "tool.search_docs",
+    "name": "execute_tool search_docs",
     "context": {
-        "trace_id": "0xc0d6ed116f623434821f76708ea6ac82",
-        "span_id": "0x84b01dd013526b09",
+        "trace_id": "0xf6d914392aeac0773cbe6dbe80567647",
+        "span_id": "0xb259cecaf2230063",
         "trace_state": "[]"
     },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x2fc586deedcc1b87",
-    "start_time": "2026-07-23T03:51:53.636374Z",
-    "end_time": "2026-07-23T03:51:53.636663Z",
+    "kind": "SpanKind.CLIENT",
+    "parent_id": "0x63aafaf8ac65ba61",
+    "start_time": "2026-07-23T11:35:31.690990Z",
+    "end_time": "2026-07-23T11:35:31.691444Z",
     "status": {
         "status_code": "ERROR",
         "description": "AgentScope scenario error"
     },
     "attributes": {
-        "tool_name": "search_docs",
-        "otel_signal": "trace",
-        "http.status_code": 500,
+        "gen_ai.operation.name": "execute_tool",
+        "gen_ai.tool.name": "search_docs",
+        "gen_ai.tool.type": "function",
+        "server.address": "document-search",
+        "otel.signal": "trace",
+        "http.response.status_code": 500,
         "error.type": "upstream_unavailable",
         "agentscope.duration_ms": 0,
         "agentscope.status": "error"
@@ -69,36 +530,38 @@
             "telemetry.sdk.language": "python",
             "telemetry.sdk.name": "opentelemetry",
             "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
+            "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+            "service.name": "agentscope-tool-gateway",
             "service.namespace": "agentscope-sidekick",
             "deployment.environment": "local-demo",
             "hackathon.track": "ai-agent-observability"
         },
         "schema_url": ""
     }
-}
+}
 {
-    "name": "LLM(gpt-4o-mini)",
+    "name": "chat gpt-4o-mini",
     "context": {
-        "trace_id": "0xc0d6ed116f623434821f76708ea6ac82",
-        "span_id": "0x4fe4a224fc7afed6",
+        "trace_id": "0xf6d914392aeac0773cbe6dbe80567647",
+        "span_id": "0x6458c134e00cb3d8",
         "trace_state": "[]"
     },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x2fc586deedcc1b87",
-    "start_time": "2026-07-23T03:51:53.636713Z",
-    "end_time": "2026-07-23T03:51:53.636735Z",
+    "kind": "SpanKind.CLIENT",
+    "parent_id": "0x63aafaf8ac65ba61",
+    "start_time": "2026-07-23T11:35:31.691540Z",
+    "end_time": "2026-07-23T11:35:31.691603Z",
     "status": {
         "status_code": "UNSET"
     },
     "attributes": {
-        "gen_ai_system": "openai",
-        "gen_ai_request_model": "gpt-4o-mini",
-        "gen_ai_usage_input_tokens": 1919,
-        "gen_ai_usage_output_tokens": 421,
-        "agentscope_token_budget_exceeded": false,
-        "otel_signal": "trace",
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "openai",
+        "gen_ai.request.model": "gpt-4o-mini",
+        "gen_ai.usage.input_tokens": 1919,
+        "gen_ai.usage.output_tokens": 421,
+        "server.address": "api.openai.com",
+        "agentscope.token_budget_exceeded": false,
+        "otel.signal": "trace",
         "agentscope.duration_ms": 0,
         "agentscope.status": "ok"
     },
@@ -109,34 +572,75 @@
             "telemetry.sdk.language": "python",
             "telemetry.sdk.name": "opentelemetry",
             "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
+            "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+            "service.name": "agentscope-llm-gateway",
             "service.namespace": "agentscope-sidekick",
             "deployment.environment": "local-demo",
             "hackathon.track": "ai-agent-observability"
         },
         "schema_url": ""
     }
-}
+}
 {
-    "name": "ResearchAgent.run",
+    "name": "INSERT agent_runs",
     "context": {
-        "trace_id": "0xc0d6ed116f623434821f76708ea6ac82",
-        "span_id": "0x2fc586deedcc1b87",
+        "trace_id": "0xf6d914392aeac0773cbe6dbe80567647",
+        "span_id": "0x405080d2158c5a5d",
         "trace_state": "[]"
     },
     "kind": "SpanKind.INTERNAL",
+    "parent_id": "0x0b2a61802f103f66",
+    "start_time": "2026-07-23T11:35:31.692403Z",
+    "end_time": "2026-07-23T11:35:31.692464Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "db.system.name": "in_memory",
+        "db.operation.name": "INSERT",
+        "db.collection.name": "agent_runs",
+        "agentscope.component": "persistence",
+        "agentscope.duration_ms": 0,
+        "agentscope.status": "ok"
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.44.0",
+            "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+            "service.name": "agentscope-api",
+            "service.namespace": "agentscope-sidekick",
+            "deployment.environment": "local-demo",
+            "hackathon.track": "ai-agent-observability"
+        },
+        "schema_url": ""
+    }
+}
+{
+    "name": "POST /demo/run",
+    "context": {
+        "trace_id": "0xf6d914392aeac0773cbe6dbe80567647",
+        "span_id": "0x0b2a61802f103f66",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.SERVER",
     "parent_id": null,
-    "start_time": "2026-07-23T03:51:53.635981Z",
-    "end_time": "2026-07-23T03:51:53.637151Z",
+    "start_time": "2026-07-23T11:35:31.690281Z",
+    "end_time": "2026-07-23T11:35:31.694077Z",
     "status": {
         "status_code": "UNSET"
     },
     "attributes": {
-        "scenario": "tool_failure",
-        "agent_name": "ResearchAgent",
-        "agentscope.trace_id": "c0d6ed116f623434821f76708ea6ac82",
-        "agentscope.duration_ms": 1,
+        "http.request.method": "POST",
+        "http.route": "/demo/run",
+        "server.address": "agentscope-api",
+        "agentscope.component": "api",
+        "http.response.status_code": 200,
+        "agentscope.trace_id": "f6d914392aeac0773cbe6dbe80567647",
+        "agentscope.duration_ms": 2,
         "agentscope.status": "ok"
     },
     "events": [],
@@ -146,389 +650,16 @@
             "telemetry.sdk.language": "python",
             "telemetry.sdk.name": "opentelemetry",
             "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
+            "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
+            "service.name": "agentscope-api",
             "service.namespace": "agentscope-sidekick",
             "deployment.environment": "local-demo",
             "hackathon.track": "ai-agent-observability"
         },
         "schema_url": ""
     }
-}
-{
-    "name": "vector_db.query",
-    "context": {
-        "trace_id": "0x150334ca71711077c2977e68b2f26727",
-        "span_id": "0x08ec2f399192edd2",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x137dbe44c6c97b19",
-    "start_time": "2026-07-23T03:51:53.637280Z",
-    "end_time": "2026-07-23T03:51:53.637379Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "db_system": "qdrant",
-        "otel_signal": "trace",
-        "retrieval_score": 0.18,
-        "results_used": 1,
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
-{
-    "name": "tool.search_docs",
-    "context": {
-        "trace_id": "0x150334ca71711077c2977e68b2f26727",
-        "span_id": "0x92a3e46ceca7ffcc",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x137dbe44c6c97b19",
-    "start_time": "2026-07-23T03:51:53.637440Z",
-    "end_time": "2026-07-23T03:51:53.637480Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "tool_name": "search_docs",
-        "otel_signal": "trace",
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
-{
-    "name": "tool.summarize",
-    "context": {
-        "trace_id": "0x150334ca71711077c2977e68b2f26727",
-        "span_id": "0xcf2ebf266bfc4037",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x137dbe44c6c97b19",
-    "start_time": "2026-07-23T03:51:53.637510Z",
-    "end_time": "2026-07-23T03:51:53.637541Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "tool_name": "summarize",
-        "otel_signal": "trace",
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
-{
-    "name": "LLM(gpt-4o-mini)",
-    "context": {
-        "trace_id": "0x150334ca71711077c2977e68b2f26727",
-        "span_id": "0x4cc9cc2602cd6ff0",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x137dbe44c6c97b19",
-    "start_time": "2026-07-23T03:51:53.637573Z",
-    "end_time": "2026-07-23T03:51:53.637590Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "gen_ai_system": "openai",
-        "gen_ai_request_model": "gpt-4o-mini",
-        "gen_ai_usage_input_tokens": 1919,
-        "gen_ai_usage_output_tokens": 421,
-        "agentscope_token_budget_exceeded": false,
-        "otel_signal": "trace",
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
-{
-    "name": "ResearchAgent.run",
-    "context": {
-        "trace_id": "0x150334ca71711077c2977e68b2f26727",
-        "span_id": "0x137dbe44c6c97b19",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": null,
-    "start_time": "2026-07-23T03:51:53.637231Z",
-    "end_time": "2026-07-23T03:51:53.637807Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "scenario": "retrieval_miss",
-        "agent_name": "ResearchAgent",
-        "agentscope.trace_id": "150334ca71711077c2977e68b2f26727",
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
-{
-    "name": "vector_db.query",
-    "context": {
-        "trace_id": "0xb27836379b883221e4c610c48e673038",
-        "span_id": "0x955f54ec88ec82b0",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x45aeff956b07ec73",
-    "start_time": "2026-07-23T03:51:53.637896Z",
-    "end_time": "2026-07-23T03:51:53.637981Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "db_system": "qdrant",
-        "otel_signal": "trace",
-        "retrieval_score": 0.76,
-        "results_used": 3,
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
-{
-    "name": "tool.search_docs",
-    "context": {
-        "trace_id": "0xb27836379b883221e4c610c48e673038",
-        "span_id": "0xeebd5459a2131cea",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x45aeff956b07ec73",
-    "start_time": "2026-07-23T03:51:53.638012Z",
-    "end_time": "2026-07-23T03:51:53.638039Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "tool_name": "search_docs",
-        "otel_signal": "trace",
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
-{
-    "name": "tool.summarize",
-    "context": {
-        "trace_id": "0xb27836379b883221e4c610c48e673038",
-        "span_id": "0x3bcfa21415c8cee5",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x45aeff956b07ec73",
-    "start_time": "2026-07-23T03:51:53.638066Z",
-    "end_time": "2026-07-23T03:51:53.638092Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "tool_name": "summarize",
-        "otel_signal": "trace",
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
-{
-    "name": "LLM(gpt-4o-mini)",
-    "context": {
-        "trace_id": "0xb27836379b883221e4c610c48e673038",
-        "span_id": "0xd0eb418ba6e0eaa0",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": "0x45aeff956b07ec73",
-    "start_time": "2026-07-23T03:51:53.638121Z",
-    "end_time": "2026-07-23T03:51:53.638204Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "gen_ai_system": "openai",
-        "gen_ai_request_model": "gpt-4o-mini",
-        "gen_ai_usage_input_tokens": 15286,
-        "gen_ai_usage_output_tokens": 3355,
-        "agentscope_token_budget_exceeded": true,
-        "otel_signal": "trace",
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
-{
-    "name": "ResearchAgent.run",
-    "context": {
-        "trace_id": "0xb27836379b883221e4c610c48e673038",
-        "span_id": "0x45aeff956b07ec73",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": null,
-    "start_time": "2026-07-23T03:51:53.637856Z",
-    "end_time": "2026-07-23T03:51:53.638381Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {
-        "scenario": "token_spike",
-        "agent_name": "ResearchAgent",
-        "agentscope.trace_id": "b27836379b883221e4c610c48e673038",
-        "agentscope.duration_ms": 0,
-        "agentscope.status": "ok"
-    },
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    }
-}
+}
+{'canonical_trace': {'id': 'run_f6d91439', 'scenario': 'Tool failure', 'status': 'failed', 'trace_id': 'f6d914392aeac0773cbe6dbe80567647', 'latency_ms': 12480, 'tokens': 2341, 'retrieval_score': 0.63, 'spans': ({'name': 'ResearchAgent.run', 'service': 'agent', 'duration_ms': 12480, 'status': 'ok'}, {'name': 'vector_db.query', 'service': 'retrieval', 'duration_ms': 660, 'status': 'ok'}, {'name': 'tool.search_docs', 'service': 'tool', 'duration_ms': 2410, 'status': 'error'}, {'name': 'LLM(gpt-4o-mini)', 'service': 'llm', 'duration_ms': 9630, 'status': 'ok'}), 'logs': ('ERROR tool.search_docs HTTP 500 Internal Server Error', 'WARN ResearchAgent Tool call failed: search_docs')}}
 {
     "resource_metrics": [
         {
@@ -537,7 +668,7 @@
                     "telemetry.sdk.language": "python",
                     "telemetry.sdk.name": "opentelemetry",
                     "telemetry.sdk.version": "1.44.0",
-                    "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
+                    "service.instance.id": "884820d7-43fa-45e0-bc9a-e7bbd8b52af8",
                     "service.name": "agentscope-demo-agent",
                     "service.namespace": "agentscope-sidekick",
                     "deployment.environment": "local-demo",
@@ -565,1053 +696,9 @@
                                             "tool_name": "search_docs",
                                             "status": "error"
                                         },
-                                        "start_time_unix_nano": 1784778713636471700,
-                                        "time_unix_nano": 1784778713639851800,
+                                        "start_time_unix_nano": 1784806531691123600,
+                                        "time_unix_nano": 1784806531701484600,
                                         "value": 1,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 1,
-                                                "time_unix_nano": 1784778713636390500,
-                                                "span_id": 9561174788422134537,
-                                                "trace_id": 256327735030856686250576376894111263874
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "tool_name": "search_docs",
-                                            "status": "ok"
-                                        },
-                                        "start_time_unix_nano": 1784778713637459500,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "value": 2,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 1,
-                                                "time_unix_nano": 1784778713638021800,
-                                                "span_id": 17202998895573146858,
-                                                "trace_id": 237226758528541567344370432143096492088
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "tool_name": "summarize",
-                                            "status": "ok"
-                                        },
-                                        "start_time_unix_nano": 1784778713637525700,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "value": 2,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 1,
-                                                "time_unix_nano": 1784778713638077300,
-                                                "span_id": 4309841575565381349,
-                                                "trace_id": 237226758528541567344370432143096492088
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "aggregation_temporality": 2,
-                                "is_monotonic": true
-                            }
-                        },
-                        {
-                            "name": "agentscope.agent.runs",
-                            "description": "",
-                            "unit": "{run}",
-                            "data": {
-                                "data_points": [
-                                    {
-                                        "attributes": {
-                                            "scenario": "tool_failure",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713636781900,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "value": 1,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 1,
-                                                "time_unix_nano": 1784778713636752200,
-                                                "span_id": 3442305782225050503,
-                                                "trace_id": 256327735030856686250576376894111263874
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637610000,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "value": 1,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 1,
-                                                "time_unix_nano": 1784778713637601500,
-                                                "span_id": 1404487861411609369,
-                                                "trace_id": 27930435526555548076600310409207113511
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638220900,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "value": 1,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 1,
-                                                "time_unix_nano": 1784778713638214200,
-                                                "span_id": 5021231651775573107,
-                                                "trace_id": 237226758528541567344370432143096492088
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "aggregation_temporality": 2,
-                                "is_monotonic": true
-                            }
-                        },
-                        {
-                            "name": "agentscope.agent.tokens",
-                            "description": "",
-                            "unit": "{token}",
-                            "data": {
-                                "data_points": [
-                                    {
-                                        "attributes": {
-                                            "scenario": "tool_failure",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713636814700,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "value": 2341,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 2341,
-                                                "time_unix_nano": 1784778713636800900,
-                                                "span_id": 3442305782225050503,
-                                                "trace_id": 256327735030856686250576376894111263874
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637628800,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "value": 2341,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 2341,
-                                                "time_unix_nano": 1784778713637623200,
-                                                "span_id": 1404487861411609369,
-                                                "trace_id": 27930435526555548076600310409207113511
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638239500,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "value": 18642,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 18642,
-                                                "time_unix_nano": 1784778713638234800,
-                                                "span_id": 5021231651775573107,
-                                                "trace_id": 237226758528541567344370432143096492088
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "aggregation_temporality": 2,
-                                "is_monotonic": true
-                            }
-                        },
-                        {
-                            "name": "agentscope.agent.tokens_per_run",
-                            "description": "",
-                            "unit": "{token}",
-                            "data": {
-                                "data_points": [
-                                    {
-                                        "attributes": {
-                                            "scenario": "tool_failure",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713636923700,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "count": 1,
-                                        "sum": 2341,
-                                        "bucket_counts": [
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 2341,
-                                        "max": 2341,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 2341,
-                                                "time_unix_nano": 1784778713636829000,
-                                                "span_id": 3442305782225050503,
-                                                "trace_id": 256327735030856686250576376894111263874
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637643200,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "count": 1,
-                                        "sum": 2341,
-                                        "bucket_counts": [
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 2341,
-                                        "max": 2341,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 2341,
-                                                "time_unix_nano": 1784778713637638500,
-                                                "span_id": 1404487861411609369,
-                                                "trace_id": 27930435526555548076600310409207113511
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638253800,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "count": 1,
-                                        "sum": 18642,
-                                        "bucket_counts": [
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            1
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 18642,
-                                        "max": 18642,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 18642,
-                                                "time_unix_nano": 1784778713638249500,
-                                                "span_id": 5021231651775573107,
-                                                "trace_id": 237226758528541567344370432143096492088
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "aggregation_temporality": 2
-                            }
-                        },
-                        {
-                            "name": "agentscope.agent.duration",
-                            "description": "",
-                            "unit": "ms",
-                            "data": {
-                                "data_points": [
-                                    {
-                                        "attributes": {
-                                            "scenario": "tool_failure",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713636976600,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "count": 1,
-                                        "sum": 0.88,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.88,
-                                        "max": 0.88,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 0.88,
-                                                "time_unix_nano": 1784778713636955300,
-                                                "span_id": 3442305782225050503,
-                                                "trace_id": 256327735030856686250576376894111263874
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637671400,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "count": 1,
-                                        "sum": 0.41,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.41,
-                                        "max": 0.41,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 0.41,
-                                                "time_unix_nano": 1784778713637666300,
-                                                "span_id": 1404487861411609369,
-                                                "trace_id": 27930435526555548076600310409207113511
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638277700,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "count": 1,
-                                        "sum": 0.38,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.38,
-                                        "max": 0.38,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 0.38,
-                                                "time_unix_nano": 1784778713638273400,
-                                                "span_id": 5021231651775573107,
-                                                "trace_id": 237226758528541567344370432143096492088
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "aggregation_temporality": 2
-                            }
-                        },
-                        {
-                            "name": "agentscope.retrieval.score",
-                            "description": "",
-                            "unit": "1",
-                            "data": {
-                                "data_points": [
-                                    {
-                                        "attributes": {
-                                            "scenario": "tool_failure",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637011500,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "count": 1,
-                                        "sum": 0.73,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.73,
-                                        "max": 0.73,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 0.73,
-                                                "time_unix_nano": 1784778713636996400,
-                                                "span_id": 3442305782225050503,
-                                                "trace_id": 256327735030856686250576376894111263874
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637696500,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "count": 1,
-                                        "sum": 0.18,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.18,
-                                        "max": 0.18,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 0.18,
-                                                "time_unix_nano": 1784778713637688100,
-                                                "span_id": 1404487861411609369,
-                                                "trace_id": 27930435526555548076600310409207113511
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638295600,
-                                        "time_unix_nano": 1784778713639851800,
-                                        "count": 1,
-                                        "sum": 0.76,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.76,
-                                        "max": 0.76,
-                                        "exemplars": [
-                                            {
-                                                "filtered_attributes": {},
-                                                "value": 0.76,
-                                                "time_unix_nano": 1784778713638291700,
-                                                "span_id": 5021231651775573107,
-                                                "trace_id": 237226758528541567344370432143096492088
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "aggregation_temporality": 2
-                            }
-                        }
-                    ],
-                    "schema_url": ""
-                }
-            ],
-            "schema_url": ""
-        }
-    ]
-}
-{
-    "body": "retrieval completed",
-    "severity_number": 9,
-    "severity_text": "INFO",
-    "attributes": {
-        "retrieval_score": 0.73,
-        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
-        "code.function.name": "_emit_log",
-        "code.line.number": 195
-    },
-    "dropped_attributes": 0,
-    "timestamp": "2026-07-23T03:51:53.636140Z",
-    "observed_timestamp": "2026-07-23T03:51:53.636205Z",
-    "trace_id": "0xc0d6ed116f623434821f76708ea6ac82",
-    "span_id": "0x6bff00100df417a6",
-    "trace_flags": 3,
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    },
-    "event_name": ""
-}
-{
-    "body": "search_docs returned HTTP 500",
-    "severity_number": 17,
-    "severity_text": "ERROR",
-    "attributes": {
-        "tool_name": "search_docs",
-        "http_status_code": 500,
-        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
-        "code.function.name": "_emit_log",
-        "code.line.number": 195
-    },
-    "dropped_attributes": 0,
-    "timestamp": "2026-07-23T03:51:53.636532Z",
-    "observed_timestamp": "2026-07-23T03:51:53.636568Z",
-    "trace_id": "0xc0d6ed116f623434821f76708ea6ac82",
-    "span_id": "0x84b01dd013526b09",
-    "trace_flags": 3,
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    },
-    "event_name": ""
-}
-{
-    "body": "agent run completed",
-    "severity_number": 17,
-    "severity_text": "ERROR",
-    "attributes": {
-        "scenario": "tool_failure",
-        "trace_id": "c0d6ed116f623434821f76708ea6ac82",
-        "tool_status": "error",
-        "token_count": 2341,
-        "retrieval_score": 0.73,
-        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
-        "code.function.name": "_emit_log",
-        "code.line.number": 195
-    },
-    "dropped_attributes": 0,
-    "timestamp": "2026-07-23T03:51:53.637042Z",
-    "observed_timestamp": "2026-07-23T03:51:53.637066Z",
-    "trace_id": "0xc0d6ed116f623434821f76708ea6ac82",
-    "span_id": "0x2fc586deedcc1b87",
-    "trace_flags": 3,
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    },
-    "event_name": ""
-}
-{
-    "body": "retrieval completed",
-    "severity_number": 13,
-    "severity_text": "WARN",
-    "attributes": {
-        "retrieval_score": 0.18,
-        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
-        "code.function.name": "_emit_log",
-        "code.line.number": 195
-    },
-    "dropped_attributes": 0,
-    "timestamp": "2026-07-23T03:51:53.637308Z",
-    "observed_timestamp": "2026-07-23T03:51:53.637328Z",
-    "trace_id": "0x150334ca71711077c2977e68b2f26727",
-    "span_id": "0x08ec2f399192edd2",
-    "trace_flags": 3,
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    },
-    "event_name": ""
-}
-{
-    "body": "agent run completed",
-    "severity_number": 9,
-    "severity_text": "INFO",
-    "attributes": {
-        "scenario": "retrieval_miss",
-        "trace_id": "150334ca71711077c2977e68b2f26727",
-        "tool_status": "ok",
-        "token_count": 2341,
-        "retrieval_score": 0.18,
-        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
-        "code.function.name": "_emit_log",
-        "code.line.number": 195
-    },
-    "dropped_attributes": 0,
-    "timestamp": "2026-07-23T03:51:53.637723Z",
-    "observed_timestamp": "2026-07-23T03:51:53.637745Z",
-    "trace_id": "0x150334ca71711077c2977e68b2f26727",
-    "span_id": "0x137dbe44c6c97b19",
-    "trace_flags": 3,
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    },
-    "event_name": ""
-}
-{
-    "body": "retrieval completed",
-    "severity_number": 9,
-    "severity_text": "INFO",
-    "attributes": {
-        "retrieval_score": 0.76,
-        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
-        "code.function.name": "_emit_log",
-        "code.line.number": 195
-    },
-    "dropped_attributes": 0,
-    "timestamp": "2026-07-23T03:51:53.637918Z",
-    "observed_timestamp": "2026-07-23T03:51:53.637934Z",
-    "trace_id": "0xb27836379b883221e4c610c48e673038",
-    "span_id": "0x955f54ec88ec82b0",
-    "trace_flags": 3,
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    },
-    "event_name": ""
-}
-{
-    "body": "token budget exceeded",
-    "severity_number": 13,
-    "severity_text": "WARN",
-    "attributes": {
-        "token_count": 18642,
-        "model": "gpt-4o-mini",
-        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
-        "code.function.name": "_emit_log",
-        "code.line.number": 195
-    },
-    "dropped_attributes": 0,
-    "timestamp": "2026-07-23T03:51:53.638145Z",
-    "observed_timestamp": "2026-07-23T03:51:53.638161Z",
-    "trace_id": "0xb27836379b883221e4c610c48e673038",
-    "span_id": "0xd0eb418ba6e0eaa0",
-    "trace_flags": 3,
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    },
-    "event_name": ""
-}
-{
-    "body": "agent run completed",
-    "severity_number": 9,
-    "severity_text": "INFO",
-    "attributes": {
-        "scenario": "token_spike",
-        "trace_id": "b27836379b883221e4c610c48e673038",
-        "tool_status": "ok",
-        "token_count": 18642,
-        "retrieval_score": 0.76,
-        "code.file.path": "C:\\Users\\phani\\Documents\\Hackthon\\apps\\agent\\demo_agent.py",
-        "code.function.name": "_emit_log",
-        "code.line.number": 195
-    },
-    "dropped_attributes": 0,
-    "timestamp": "2026-07-23T03:51:53.638319Z",
-    "observed_timestamp": "2026-07-23T03:51:53.638335Z",
-    "trace_id": "0xb27836379b883221e4c610c48e673038",
-    "span_id": "0x45aeff956b07ec73",
-    "trace_flags": 3,
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.44.0",
-            "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-            "service.name": "agentscope-demo-agent",
-            "service.namespace": "agentscope-sidekick",
-            "deployment.environment": "local-demo",
-            "hackathon.track": "ai-agent-observability"
-        },
-        "schema_url": ""
-    },
-    "event_name": ""
-}
-{
-    "resource_metrics": [
-        {
-            "resource": {
-                "attributes": {
-                    "telemetry.sdk.language": "python",
-                    "telemetry.sdk.name": "opentelemetry",
-                    "telemetry.sdk.version": "1.44.0",
-                    "service.instance.id": "e11b49de-8f6b-4c84-8b7d-42315787ce1d",
-                    "service.name": "agentscope-demo-agent",
-                    "service.namespace": "agentscope-sidekick",
-                    "deployment.environment": "local-demo",
-                    "hackathon.track": "ai-agent-observability"
-                },
-                "schema_url": ""
-            },
-            "scope_metrics": [
-                {
-                    "scope": {
-                        "name": "agentscope.demo_agent",
-                        "version": null,
-                        "schema_url": "",
-                        "attributes": null
-                    },
-                    "metrics": [
-                        {
-                            "name": "agentscope.tool.calls",
-                            "description": "",
-                            "unit": "{call}",
-                            "data": {
-                                "data_points": [
-                                    {
-                                        "attributes": {
-                                            "tool_name": "search_docs",
-                                            "status": "error"
-                                        },
-                                        "start_time_unix_nano": 1784778713636471700,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "value": 1,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "tool_name": "search_docs",
-                                            "status": "ok"
-                                        },
-                                        "start_time_unix_nano": 1784778713637459500,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "value": 2,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "tool_name": "summarize",
-                                            "status": "ok"
-                                        },
-                                        "start_time_unix_nano": 1784778713637525700,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "value": 2,
                                         "exemplars": []
                                     }
                                 ],
@@ -1630,28 +717,8 @@
                                             "scenario": "tool_failure",
                                             "agent_name": "ResearchAgent"
                                         },
-                                        "start_time_unix_nano": 1784778713636781900,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "value": 1,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637610000,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "value": 1,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638220900,
-                                        "time_unix_nano": 1784778713643984900,
+                                        "start_time_unix_nano": 1784806531691687700,
+                                        "time_unix_nano": 1784806531701484600,
                                         "value": 1,
                                         "exemplars": []
                                     }
@@ -1671,29 +738,9 @@
                                             "scenario": "tool_failure",
                                             "agent_name": "ResearchAgent"
                                         },
-                                        "start_time_unix_nano": 1784778713636814700,
-                                        "time_unix_nano": 1784778713643984900,
+                                        "start_time_unix_nano": 1784806531691752200,
+                                        "time_unix_nano": 1784806531701484600,
                                         "value": 2341,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637628800,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "value": 2341,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638239500,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "value": 18642,
                                         "exemplars": []
                                     }
                                 ],
@@ -1712,8 +759,8 @@
                                             "scenario": "tool_failure",
                                             "agent_name": "ResearchAgent"
                                         },
-                                        "start_time_unix_nano": 1784778713636923700,
-                                        "time_unix_nano": 1784778713643984900,
+                                        "start_time_unix_nano": 1784806531691926400,
+                                        "time_unix_nano": 1784806531701484600,
                                         "count": 1,
                                         "sum": 2341,
                                         "bucket_counts": [
@@ -1753,102 +800,6 @@
                                         ],
                                         "min": 2341,
                                         "max": 2341,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637643200,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "count": 1,
-                                        "sum": 2341,
-                                        "bucket_counts": [
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 2341,
-                                        "max": 2341,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638253800,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "count": 1,
-                                        "sum": 18642,
-                                        "bucket_counts": [
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            1
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 18642,
-                                        "max": 18642,
                                         "exemplars": []
                                     }
                                 ],
@@ -1866,10 +817,10 @@
                                             "scenario": "tool_failure",
                                             "agent_name": "ResearchAgent"
                                         },
-                                        "start_time_unix_nano": 1784778713636976600,
-                                        "time_unix_nano": 1784778713643984900,
+                                        "start_time_unix_nano": 1784806531692020300,
+                                        "time_unix_nano": 1784806531701484600,
                                         "count": 1,
-                                        "sum": 0.88,
+                                        "sum": 1.31,
                                         "bucket_counts": [
                                             0,
                                             1,
@@ -1905,104 +856,8 @@
                                             7500.0,
                                             10000.0
                                         ],
-                                        "min": 0.88,
-                                        "max": 0.88,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637671400,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "count": 1,
-                                        "sum": 0.41,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.41,
-                                        "max": 0.41,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638277700,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "count": 1,
-                                        "sum": 0.38,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.38,
-                                        "max": 0.38,
+                                        "min": 1.31,
+                                        "max": 1.31,
                                         "exemplars": []
                                     }
                                 ],
@@ -2020,10 +875,10 @@
                                             "scenario": "tool_failure",
                                             "agent_name": "ResearchAgent"
                                         },
-                                        "start_time_unix_nano": 1784778713637011500,
-                                        "time_unix_nano": 1784778713643984900,
+                                        "start_time_unix_nano": 1784806531692090700,
+                                        "time_unix_nano": 1784806531701484600,
                                         "count": 1,
-                                        "sum": 0.73,
+                                        "sum": 0.63,
                                         "bucket_counts": [
                                             0,
                                             1,
@@ -2059,104 +914,8 @@
                                             7500.0,
                                             10000.0
                                         ],
-                                        "min": 0.73,
-                                        "max": 0.73,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "retrieval_miss",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713637696500,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "count": 1,
-                                        "sum": 0.18,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.18,
-                                        "max": 0.18,
-                                        "exemplars": []
-                                    },
-                                    {
-                                        "attributes": {
-                                            "scenario": "token_spike",
-                                            "agent_name": "ResearchAgent"
-                                        },
-                                        "start_time_unix_nano": 1784778713638295600,
-                                        "time_unix_nano": 1784778713643984900,
-                                        "count": 1,
-                                        "sum": 0.76,
-                                        "bucket_counts": [
-                                            0,
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0,
-                                            0
-                                        ],
-                                        "explicit_bounds": [
-                                            0.0,
-                                            5.0,
-                                            10.0,
-                                            25.0,
-                                            50.0,
-                                            75.0,
-                                            100.0,
-                                            250.0,
-                                            500.0,
-                                            750.0,
-                                            1000.0,
-                                            2500.0,
-                                            5000.0,
-                                            7500.0,
-                                            10000.0
-                                        ],
-                                        "min": 0.76,
-                                        "max": 0.76,
+                                        "min": 0.63,
+                                        "max": 0.63,
                                         "exemplars": []
                                     }
                                 ],
@@ -2170,4 +929,4 @@
             "schema_url": ""
         }
     ]
-}
+}

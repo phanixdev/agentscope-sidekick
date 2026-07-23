@@ -19,7 +19,7 @@ try:
     from opentelemetry.sdk.resources import Resource
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-    from opentelemetry.trace import Status, StatusCode
+    from opentelemetry.trace import SpanKind, Status, StatusCode
 except Exception:  # pragma: no cover - fallback supports minimal Python environments
     trace = None
     OTLPLogExporter = None
@@ -36,6 +36,7 @@ except Exception:  # pragma: no cover - fallback supports minimal Python environ
     TracerProvider = None
     BatchSpanProcessor = None
     ConsoleSpanExporter = None
+    SpanKind = None
     Status = None
     StatusCode = None
 
@@ -107,14 +108,35 @@ def _configure_telemetry() -> dict[str, object]:
 
 TELEMETRY = _configure_telemetry()
 TRACER = TELEMETRY.get("tracer")
+COMPONENT_PROVIDERS: list[object] = []
+
+
+def create_component_tracer(service_name: str, scope_name: str):
+    if trace is None:
+        return None
+    resource = Resource.create({**RESOURCE_ATTRIBUTES, "service.name": service_name})
+    provider = TracerProvider(resource=resource)
+    trace_endpoint = _signal_endpoint("traces")
+    exporter = OTLPSpanExporter(endpoint=trace_endpoint) if trace_endpoint else ConsoleSpanExporter()
+    provider.add_span_processor(BatchSpanProcessor(exporter))
+    COMPONENT_PROVIDERS.append(provider)
+    return provider.get_tracer(scope_name)
+
+
+RETRIEVAL_TRACER = create_component_tracer("agentscope-retrieval", "agentscope.retrieval")
+TOOL_TRACER = create_component_tracer("agentscope-tool-gateway", "agentscope.tools")
+LLM_TRACER = create_component_tracer("agentscope-llm-gateway", "agentscope.llm")
 
 
 @contextmanager
 def span(name: str, **attributes: object):
     start = time.perf_counter()
     status = str(attributes.pop("agentscope_status_override", "ok"))
+    tracer_override = attributes.pop("tracer_override", TRACER)
+    kind_name = str(attributes.pop("span_kind", "internal")).upper()
+    span_kind = getattr(SpanKind, kind_name, SpanKind.INTERNAL) if SpanKind else None
     active_span = None
-    context = TRACER.start_as_current_span(name) if TRACER else None
+    context = tracer_override.start_as_current_span(name, kind=span_kind) if tracer_override else None
     try:
         if context:
             active_span = context.__enter__()
@@ -142,7 +164,17 @@ def span(name: str, **attributes: object):
 def run_demo_agent(scenario: str = "tool_failure") -> dict[str, object]:
     started = time.perf_counter()
     fallback_trace_id = uuid4().hex
-    with span("ResearchAgent.run", scenario=scenario, agent_name="ResearchAgent") as root_span:
+    with span(
+        "invoke_agent ResearchAgent",
+        agentscope_status_override="error" if scenario == "tool_failure" else "warn" if scenario in {"retrieval_miss", "token_spike"} else "ok",
+        **{
+            "gen_ai.operation.name": "invoke_agent",
+            "gen_ai.agent.name": "ResearchAgent",
+            "gen_ai.agent.id": "research-agent-v1",
+            "gen_ai.workflow.name": "agentscope-investigation",
+            "agentscope.scenario": scenario,
+        },
+    ) as root_span:
         trace_id = fallback_trace_id
         if root_span and root_span.get_span_context().is_valid:
             trace_id = format(root_span.get_span_context().trace_id, "032x")
@@ -201,11 +233,19 @@ def _retrieve(scenario: str) -> float:
     score = 0.18 if scenario == "retrieval_miss" else 0.62 + random.random() * 0.2
     score = round(score, 2)
     with span(
-        "vector_db.query",
-        db_system="qdrant",
-        otel_signal="trace",
-        retrieval_score=score,
-        results_used=1 if score < 0.3 else 3,
+        "query knowledge_chunks",
+        span_kind="client",
+        tracer_override=RETRIEVAL_TRACER,
+        **{
+            "db.system.name": "qdrant",
+            "db.operation.name": "query",
+            "db.collection.name": "knowledge_chunks",
+            "server.address": "vector-db",
+            "gen_ai.operation.name": "retrieval",
+            "agentscope.retrieval.score": score,
+            "agentscope.retrieval.results_used": 1 if score < 0.3 else 3,
+            "otel.signal": "trace",
+        },
     ):
         _emit_log(logging.WARNING if score < 0.3 else logging.INFO, "retrieval completed", retrieval_score=score)
         return score
@@ -214,19 +254,26 @@ def _retrieve(scenario: str) -> float:
 def _call_tools(scenario: str) -> str:
     status = "error" if scenario == "tool_failure" else "ok"
     with span(
-        "tool.search_docs",
-        tool_name="search_docs",
-        otel_signal="trace",
+        "execute_tool search_docs",
+        span_kind="client",
+        tracer_override=TOOL_TRACER,
         agentscope_status_override=status,
+        **{
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "search_docs",
+            "gen_ai.tool.type": "function",
+            "server.address": "document-search",
+            "otel.signal": "trace",
+        },
     ) as active_span:
         _record_metric("tools", 1, {"tool_name": "search_docs", "status": status})
         if scenario == "tool_failure":
             if active_span:
-                active_span.set_attribute("http.status_code", 500)
+                active_span.set_attribute("http.response.status_code", 500)
                 active_span.set_attribute("error.type", "upstream_unavailable")
             _emit_log(logging.ERROR, "search_docs returned HTTP 500", tool_name="search_docs", http_status_code=500)
             return "error"
-    with span("tool.summarize", tool_name="summarize", otel_signal="trace"):
+    with span("execute_tool summarize", tracer_override=TOOL_TRACER, **{"gen_ai.operation.name": "execute_tool", "gen_ai.tool.name": "summarize", "gen_ai.tool.type": "function", "otel.signal": "trace"}):
         _record_metric("tools", 1, {"tool_name": "summarize", "status": "ok"})
         return "ok"
 
@@ -234,13 +281,19 @@ def _call_tools(scenario: str) -> str:
 def _call_llm(scenario: str) -> int:
     tokens = 18_642 if scenario == "token_spike" else 2_341
     with span(
-        "LLM(gpt-4o-mini)",
-        gen_ai_system="openai",
-        gen_ai_request_model="gpt-4o-mini",
-        gen_ai_usage_input_tokens=int(tokens * 0.82),
-        gen_ai_usage_output_tokens=int(tokens * 0.18),
-        agentscope_token_budget_exceeded=tokens > 10_000,
-        otel_signal="trace",
+        "chat gpt-4o-mini",
+        span_kind="client",
+        tracer_override=LLM_TRACER,
+        **{
+            "gen_ai.operation.name": "chat",
+            "gen_ai.provider.name": "openai",
+            "gen_ai.request.model": "gpt-4o-mini",
+            "gen_ai.usage.input_tokens": int(tokens * 0.82),
+            "gen_ai.usage.output_tokens": int(tokens * 0.18),
+            "server.address": "api.openai.com",
+            "agentscope.token_budget_exceeded": tokens > 10_000,
+            "otel.signal": "trace",
+        },
     ):
         if tokens > 10_000:
             _emit_log(logging.WARNING, "token budget exceeded", token_count=tokens, model="gpt-4o-mini")
@@ -252,6 +305,8 @@ def flush_telemetry() -> None:
         provider = TELEMETRY.get(provider_name)
         if provider:
             provider.force_flush(timeout_millis=10_000)
+    for provider in COMPONENT_PROVIDERS:
+        provider.force_flush(timeout_millis=10_000)
 
 
 if __name__ == "__main__":

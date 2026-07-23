@@ -1,6 +1,6 @@
-﻿# AgentScope Sidekick Architecture
+# AgentScope Sidekick Architecture
 
-## System Flow
+## System flow
 
 ```mermaid
 flowchart LR
@@ -8,16 +8,20 @@ flowchart LR
 
     subgraph Hosted["Hosted product"]
         Web["React + Vite UI<br/>Vercel"]
-        Demo["One-click judge data<br/>browser-local"]
+        Demo["Deterministic judge dataset<br/>explicitly labeled"]
         Auth["Supabase Auth"]
         DB[("PostgreSQL<br/>RLS + indexes")]
+        Base["Healthy baseline RPC<br/>minimum 5 samples"]
+        Fix["Remediation + verified rerun"]
     end
 
-    subgraph Foundry["Reproducible Foundry deployment"]
-        Agent["Instrumented AI agent"]
-        API["Python incident API"]
+    subgraph Telemetry["Reproducible Foundry deployment"]
+        API["HTTP incident API"]
+        Agent["Agent orchestration"]
+        Retrieval["Retrieval service"]
+        Tool["Tool gateway"]
+        LLM["LLM gateway"]
         OTel["OpenTelemetry SDK"]
-        Collector["SigNoz OTLP ingester"]
         Store[("SigNoz / ClickHouse")]
         Dashboard["Native dashboard"]
         Alerts["Terraform alert rules"]
@@ -28,62 +32,81 @@ flowchart LR
     Web -->|"judge mode"| Demo
     Web -->|"authenticated mode"| Auth
     Auth --> DB
-    Web <-->|"runs, spans, logs,<br/>alerts, notes"| DB
+    Web <-->|"RLS-protected data"| DB
+    DB --> Base
+    DB --> Fix
+    Fix --> DB
 
-    Agent --> OTel
+    API --> Agent
+    Agent --> Retrieval
+    Agent --> Tool
+    Agent --> LLM
     API --> OTel
-    OTel -->|"OTLP traces, metrics, logs"| Collector
-    Collector --> Store
+    Agent --> OTel
+    Retrieval --> OTel
+    Tool --> OTel
+    LLM --> OTel
+    OTel -->|"OTLP traces, metrics, logs"| Store
     Store --> Dashboard
     Store --> Alerts
     Store <--> MCP
-    API -->|"incident and explanation API"| Web
-    MCP -->|"trace queries and<br/>dashboard updates"| Dashboard
-
     Store -. "captured execution evidence" .-> Web
 ```
 
-## Investigation Lifecycle
+## Investigation lifecycle
 
 ```mermaid
 sequenceDiagram
     participant J as Judge / operator
     participant W as Sidekick UI
-    participant A as Demo agent
-    participant O as OpenTelemetry
+    participant DB as Supabase / RLS
+    participant A as Instrumented agent
     participant S as SigNoz
-    participant M as SigNoz MCP
 
-    J->>W: Trigger tool failure, retrieval miss, or token spike
-    W->>A: Start scenario
-    A->>O: Emit parent and child spans
-    A->>O: Emit custom metrics
-    A->>O: Emit trace-correlated logs
-    O->>S: Export all signals through OTLP
-    S->>S: Store, dashboard, and evaluate alerts
-    M->>S: Query failing trace and update dashboard
-    W->>W: Correlate span, threshold, and log evidence
-    W-->>J: Explain root cause with computed confidence
-    J->>W: Save investigation note
-    J->>W: Inspect matching SigNoz proof and guardrail
+    J->>W: Open an incident or breached alert
+    W->>DB: Load tenant-scoped run and baseline
+    DB-->>W: Observed baseline or explicit reference fallback
+    W-->>J: Separate observed facts from rule interpretation
+    J->>W: Inspect trace, metric, log, and rule provenance
+    J->>W: Apply remediation
+    W->>DB: Persist action and create verification rerun
+    DB-->>W: Before/after guardrail result and lineage
+    W-->>J: Resolved, improved, or monitor result
+    A->>S: Export one HTTP-to-agent-to-persistence trace
+    S-->>W: Captured trace, dashboard, alert, and query proof
 ```
 
-## Trust Boundaries
+## Canonical trace hierarchy
+
+```text
+POST /demo/run                         agentscope-api
+├── invoke_agent ResearchAgent        agentscope-demo-agent
+│   ├── query knowledge_chunks        agentscope-retrieval
+│   ├── execute_tool search_docs      agentscope-tool-gateway
+│   └── chat gpt-4o-mini              agentscope-llm-gateway
+└── INSERT agent_runs                 agentscope-api
+```
+
+The hierarchy preserves one trace ID across five services. See `docs/telemetry-contract.md` for semantic attributes and the reproducible capture command.
+
+## Trust boundaries
 
 - The browser receives only the Supabase publishable key; authorization is enforced by workspace membership and PostgreSQL RLS.
+- Sensitive RPC execution is revoked from `PUBLIC` and `anon`, then granted to `authenticated` only.
 - Authenticated writes use scoped RPCs or RLS-protected tables. No service-role key is shipped to the client.
-- Judge mode is deterministic and browser-local, so reviewers do not need credentials.
+- Judge mode is deterministic and browser-local. Reference cohorts are visibly distinguished from observed workspace telemetry.
+- Observed baselines require at least five healthy tenant-scoped runs. Insufficient data falls back to a disclosed versioned reference.
 - The Foundry lockfile reproduces SigNoz and MCP versions, while Terraform keeps alert rules reviewable.
-- Explanations are deterministic: confidence is derived from available anomaly signals, and every conclusion exposes its trace, span, metric, and log evidence.
+- Diagnosis uses versioned deterministic rules. The UI exposes the rule, query, trace/span IDs, source, and explicit LLM involvement.
 
-## Repository Ownership
+## Repository ownership
 
 | Component | Responsibility |
 | --- | --- |
-| `apps/web` | Product UI, investigation workflow, Supabase client, and evidence viewer |
-| `apps/api` | Incident API and deterministic telemetry explanation |
-| `apps/agent` | Instrumented scenarios and OpenTelemetry emission |
-| `supabase` | Auth-linked schema, onboarding, RLS, indexes, RPCs, and persistence |
+| `apps/web` | Investigation, provenance, remediation, recovery states, Supabase client, and proof viewer |
+| `apps/api` | HTTP trace root, incident persistence, and deterministic explanation API |
+| `apps/agent` | Cross-service agent, retrieval, tool, model, metric, and log instrumentation |
+| `supabase` | Auth-linked schema, RLS, baseline RPC, remediation history, and pgTAP proof |
 | `infra` | Foundry casting, SigNoz dashboard, Terraform alerts, and deployment assets |
-| `output/telemetry` | Saved MCP, API, ClickHouse, OTLP, and Terraform verification evidence |
-| `tests` | Architecture, signal, dashboard, alert, and incident verification |
+| `output/telemetry` | Canonical OTLP plus saved MCP, API, ClickHouse, and Terraform evidence |
+| `tests` | Product, security, provenance, trace hierarchy, and evidence contracts |

@@ -28,9 +28,9 @@ AgentScope Sidekick instruments AI agent runs as trace trees and presents them a
 ## SigNoz / OpenTelemetry usage
 
 - Complete agent runs are modeled as parent traces.
-- `vector_db.query` spans include retrieval score and result count.
-- `tool.search_docs` spans include tool name, HTTP status, and error status.
-- `LLM(gpt-4o-mini)` spans include model name, input tokens, output tokens, and budget-exceeded attributes.
+- `query knowledge_chunks` spans include retrieval score and result count.
+- `execute_tool search_docs` spans include tool name, HTTP status, and error status.
+- `chat gpt-4o-mini` spans include model name, input tokens, output tokens, and budget-exceeded attributes.
 - A native SigNoz v5 dashboard combines metrics, traces, and logs for latency, token usage, tool reliability, and correlated errors.
 - Four reviewable Terraform alert rules cover tool failures, peak latency, token budget overflow, and retrieval quality drop.
 

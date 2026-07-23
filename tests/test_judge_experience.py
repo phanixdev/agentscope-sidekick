@@ -11,16 +11,25 @@ class JudgeExperienceContractTests(unittest.TestCase):
         cls.ui = (ROOT / "apps/web/src/main.jsx").read_text(encoding="utf-8")
         cls.data = (ROOT / "apps/web/src/data.js").read_text(encoding="utf-8")
         cls.migration = (ROOT / "supabase/migrations/202607230001_initial_schema.sql").read_text(encoding="utf-8")
+        cls.baseline_migration = (ROOT / "supabase/migrations/202607230003_observed_healthy_baselines.sql").read_text(encoding="utf-8")
 
     def test_confidence_is_explainable(self):
         self.assertIn("3 signals corroborated", self.ui)
-        self.assertIn("0.70 evidence baseline", self.ui)
+        self.assertIn("Heuristic evidence indicator, not a statistical probability.", self.ui)
         self.assertIn("Trace-correlated log", self.ui)
 
-    def test_run_comparison_has_healthy_baselines(self):
-        self.assertIn("Current run vs healthy baseline", self.ui)
+    def test_run_comparison_discloses_reference_provenance(self):
+        self.assertIn("deterministic reference", self.ui)
+        self.assertIn("Versioned judge fixture", self.data)
+        self.assertIn("Reference data", self.ui)
         self.assertEqual(self.data.count("sampleSize:"), 3)
         self.assertIn("First divergent span", self.ui)
+
+    def test_observed_baseline_is_tenant_scoped_and_sample_gated(self):
+        self.assertIn("public.is_workspace_member(run.workspace_id)", self.baseline_migration)
+        self.assertIn("having count(*) >= greatest(1, required_samples)", self.baseline_migration)
+        self.assertIn("run.status = 'completed'", self.baseline_migration)
+        self.assertIn("span.status = 'error'", self.baseline_migration)
 
     def test_alerts_deep_link_to_investigation(self):
         self.assertIn("openAlertInvestigation", self.ui)

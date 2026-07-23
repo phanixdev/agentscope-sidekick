@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 import os
@@ -6,8 +6,42 @@ from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
 
-from apps.agent.demo_agent import flush_telemetry, run_demo_agent
+from apps.agent.demo_agent import create_component_tracer, flush_telemetry, run_demo_agent, span
 from apps.api.incidents import explain_run, get_run, list_runs, record_demo_run
+
+
+API_TRACER = create_component_tracer("agentscope-api", "agentscope.api")
+
+
+def execute_demo_run(scenario: str, server_address: str = "agentscope-api"):
+    with span(
+        "POST /demo/run",
+        span_kind="server",
+        tracer_override=API_TRACER,
+        **{
+            "http.request.method": "POST",
+            "http.route": "/demo/run",
+            "server.address": server_address,
+            "agentscope.component": "api",
+        },
+    ) as request_span:
+        agent_result = run_demo_agent(scenario)
+        with span(
+            "INSERT agent_runs",
+            tracer_override=API_TRACER,
+            **{
+                "db.system.name": "in_memory",
+                "db.operation.name": "INSERT",
+                "db.collection.name": "agent_runs",
+                "agentscope.component": "persistence",
+            },
+        ):
+            created = record_demo_run(agent_result)
+        if request_span:
+            request_span.set_attribute("http.response.status_code", 200)
+            request_span.set_attribute("agentscope.trace_id", created.trace_id)
+    flush_telemetry()
+    return created
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -34,8 +68,10 @@ class Handler(BaseHTTPRequestHandler):
         if parsed.path == "/demo/run":
             payload = self._read_json()
             scenario = str(payload.get("scenario", "tool_failure"))
-            created = record_demo_run(run_demo_agent(scenario))
-            flush_telemetry()
+            created = execute_demo_run(
+                scenario,
+                self.headers.get("Host", "agentscope-api").split(":", 1)[0],
+            )
             self._json({"created": asdict(created)})
             return
         self.send_error(404)

@@ -3,19 +3,48 @@ import { supabase } from "./supabase";
 
 const localNotesKey = "agentscope-investigation-notes";
 
-const healthyBaselines = {
-  "Tool failure": { id: "baseline_research_24h", sampleSize: 42, latency: 4.18, tokens: 2190, retrieval: 0.67, cost: 0.019, toolErrors: 0 },
-  "Retrieval miss": { id: "baseline_analyst_24h", sampleSize: 36, latency: 2.94, tokens: 1310, retrieval: 0.71, cost: 0.012, toolErrors: 0 },
-  "Token spike": { id: "baseline_planner_24h", sampleSize: 28, latency: 4.92, tokens: 5480, retrieval: 0.72, cost: 0.054, toolErrors: 0 }
+const referenceBaselines = {
+  "Tool failure": { id: "reference_research_v1", sampleSize: 42, latency: 4.18, tokens: 2190, retrieval: 0.67, cost: 0.019, toolErrors: 0 },
+  "Retrieval miss": { id: "reference_analyst_v1", sampleSize: 36, latency: 2.94, tokens: 1310, retrieval: 0.71, cost: 0.012, toolErrors: 0 },
+  "Token spike": { id: "reference_planner_v1", sampleSize: 28, latency: 4.92, tokens: 5480, retrieval: 0.72, cost: 0.054, toolErrors: 0 }
 };
 
-function fromDatabase(run) {
+function referenceBaselineFor(scenario, reason = "Fewer than 5 healthy workspace runs were available in the selected window.") {
+  const baseline = referenceBaselines[scenario];
+  return baseline ? {
+    ...baseline,
+    kind: "reference",
+    source: "Versioned judge fixture",
+    windowLabel: "Fixed reference cohort",
+    fallbackReason: reason
+  } : null;
+}
+
+function observedBaselineFrom(row) {
+  return {
+    id: `observed_${row.scenario.toLowerCase().replaceAll(" ", "_")}_${row.window_hours}h`,
+    kind: "observed",
+    source: "Supabase workspace runs",
+    windowLabel: `Last ${row.window_hours} hours`,
+    sampleSize: Number(row.sample_size),
+    latency: Number(row.latency),
+    tokens: Number(row.tokens),
+    retrieval: Number(row.retrieval),
+    cost: Number(row.cost),
+    toolErrors: Number(row.tool_errors),
+    computedAt: row.computed_at
+  };
+}
+
+function fromDatabase(run, observedBaselines = {}, remediations = {}) {
   return {
     id: run.run_key,
     databaseId: run.id,
     traceId: run.trace_id,
     capturedAt: run.started_at,
-    baseline: healthyBaselines[run.scenario],
+    baseline: observedBaselines[run.scenario] ?? referenceBaselineFor(run.scenario),
+    remediation: remediations[run.id] ?? null,
+    attributes: run.attributes ?? {},
     scenario: run.scenario,
     status: run.status,
     agent: run.agent_name,
@@ -63,13 +92,35 @@ export async function getWorkspace(preview = false) {
 
 export async function listRuns(workspaceId, preview = false) {
   if (!supabase || preview) return agentRuns;
-  const { data, error } = await supabase
-    .from("agent_runs")
-    .select("*, run_spans(*), run_logs(*)")
-    .eq("workspace_id", workspaceId)
-    .order("started_at", { ascending: false });
+  const [runsResult, baselineResult, remediationResult] = await Promise.all([
+    supabase
+      .from("agent_runs")
+      .select("*, run_spans(*), run_logs(*)")
+      .eq("workspace_id", workspaceId)
+      .order("started_at", { ascending: false }),
+    supabase.rpc("get_healthy_baselines", {
+      target_workspace_id: workspaceId,
+      lookback_hours: 24,
+      required_samples: 5
+    }),
+    supabase
+      .from("remediations")
+      .select("id, run_id, after_run_id, action, status, before_snapshot, applied_at, verified_at")
+      .eq("workspace_id", workspaceId)
+  ]);
+  const { data, error } = runsResult;
   if (error) throw error;
-  return data.map(fromDatabase);
+  const observedBaselines = baselineResult.error
+    ? {}
+    : Object.fromEntries((baselineResult.data ?? []).map((row) => [row.scenario, observedBaselineFrom(row)]));
+  const remediations = {};
+  if (!remediationResult.error) {
+    for (const item of remediationResult.data ?? []) {
+      remediations[item.run_id] = { ...item, role: "before" };
+      if (item.after_run_id) remediations[item.after_run_id] = { ...item, role: "after" };
+    }
+  }
+  return data.map((run) => fromDatabase(run, observedBaselines, remediations));
 }
 
 export async function createDemoRun(scenario, preview = false) {
@@ -82,6 +133,59 @@ export async function createDemoRun(scenario, preview = false) {
   return data;
 }
 
+function previewRemediationRun(run, action) {
+  const baseline = run.baseline ?? referenceBaselineFor(run.scenario);
+  const latency = Math.min(baseline?.latency ?? run.latency * 0.6, 9.2);
+  const tokens = Math.round(Math.min(baseline?.tokens ?? run.tokens * 0.55, 11000));
+  const retrieval = Math.max(baseline?.retrieval ?? run.retrieval, 0.65);
+  const cost = Number(Math.min(baseline?.cost ?? run.cost * 0.6, run.cost).toFixed(3));
+  const inputTokens = Math.round(tokens * 0.82);
+  const createdAt = new Date().toISOString();
+  return {
+    ...run,
+    id: `run_fix_${crypto.randomUUID().slice(0, 6)}`,
+    databaseId: null,
+    traceId: crypto.randomUUID().replaceAll("-", ""),
+    capturedAt: createdAt,
+    startedAt: createdAt,
+    startTime: "just now",
+    status: "completed",
+    latency,
+    tokens,
+    inputTokens,
+    outputTokens: tokens - inputTokens,
+    retrieval,
+    cost,
+    tools: run.scenario === "Retrieval miss" ? "2/2" : run.tools,
+    summary: "The remediation rerun completed within all configured telemetry guardrails.",
+    nextActions: ["Monitor the repaired path for regression."],
+    spans: run.spans.map((span, index) => ({ ...span, id: `verified_${index}_${crypto.randomUUID().slice(0, 6)}`, status: "ok", start: span.start / Math.max(run.latency, 1) * latency, duration: Math.min(span.duration, latency * (index === 0 ? 1 : 0.35)) })),
+    logs: [
+      { time: "now", level: "INFO", service: "remediation", message: `Applied: ${action}` },
+      { time: "now", level: "INFO", service: "agent", message: "Verification rerun passed latency, token, retrieval, and tool guardrails" }
+    ],
+    remediation: {
+      role: "after",
+      action,
+      status: "verified",
+      run_id: run.databaseId ?? run.id,
+      applied_at: createdAt,
+      verified_at: createdAt,
+      before_snapshot: { latency: run.latency, tokens: run.tokens, retrieval: run.retrieval, cost: run.cost, status: run.status }
+    }
+  };
+}
+
+export async function applyRemediation(run, action, preview = false) {
+  if (!action?.trim()) throw new Error("Choose a remediation action before verification.");
+  if (!supabase || preview) return previewRemediationRun(run, action.trim());
+  const { data, error } = await supabase.rpc("run_remediation", {
+    target_run_id: run.databaseId,
+    action_text: action.trim()
+  });
+  if (error) throw error;
+  return data;
+}
 export async function listAlerts(workspaceId, preview = false) {
   if (!supabase || preview) {
     return [

@@ -1,4 +1,5 @@
 import pathlib
+import re
 import subprocess
 import sys
 import unittest
@@ -14,7 +15,7 @@ class TelemetryEvidenceTests(unittest.TestCase):
         EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
         with EVIDENCE.open("w", encoding="utf-8") as handle:
             subprocess.run(
-                [sys.executable, "-m", "apps.agent.demo_agent"],
+                [sys.executable, "-m", "scripts.capture_canonical_trace"],
                 cwd=ROOT,
                 stdout=handle,
                 stderr=subprocess.STDOUT,
@@ -25,18 +26,44 @@ class TelemetryEvidenceTests(unittest.TestCase):
 
     def test_real_opentelemetry_span_output_is_captured(self):
         self.assertIn('"telemetry.sdk.name": "opentelemetry"', self.text)
-        self.assertIn('"service.name": "agentscope-demo-agent"', self.text)
+        for service in (
+            "agentscope-api", "agentscope-demo-agent", "agentscope-retrieval",
+            "agentscope-tool-gateway", "agentscope-llm-gateway",
+        ):
+            self.assertIn(f'"service.name": "{service}"', self.text)
         self.assertIn('"service.namespace": "agentscope-sidekick"', self.text)
 
     def test_track_one_ai_attributes_are_present(self):
-        self.assertIn('"gen_ai_request_model": "gpt-4o-mini"', self.text)
-        self.assertIn('"gen_ai_usage_input_tokens"', self.text)
-        self.assertIn('"retrieval_score"', self.text)
-        self.assertIn('"tool_name": "search_docs"', self.text)
+        self.assertIn('"gen_ai.request.model": "gpt-4o-mini"', self.text)
+        self.assertIn('"gen_ai.usage.input_tokens"', self.text)
+        self.assertIn('"agentscope.retrieval.score"', self.text)
+        self.assertIn('"gen_ai.tool.name": "search_docs"', self.text)
+
+    def test_canonical_trace_has_http_to_persistence_waterfall(self):
+        for span_name in (
+            "POST /demo/run", "invoke_agent ResearchAgent", "query knowledge_chunks",
+            "execute_tool search_docs", "chat gpt-4o-mini", "INSERT agent_runs",
+        ):
+            self.assertIn(f'"name": "{span_name}"', self.text)
+        self.assertIn('"http.request.method": "POST"', self.text)
+        self.assertIn('"db.operation.name": "INSERT"', self.text)
+        self.assertIn('"gen_ai.operation.name": "chat"', self.text)
+
+    def test_canonical_waterfall_preserves_one_trace_id(self):
+        trace_ids = set()
+        for span_name in (
+            "POST /demo/run", "invoke_agent ResearchAgent", "query knowledge_chunks",
+            "execute_tool search_docs", "chat gpt-4o-mini", "INSERT agent_runs",
+        ):
+            start = self.text.index(f'"name": "{span_name}"')
+            match = re.search(r'"trace_id": "(0x[0-9a-f]{32})"', self.text[start:start + 700])
+            self.assertIsNotNone(match, span_name)
+            trace_ids.add(match.group(1))
+        self.assertEqual(len(trace_ids), 1)
 
     def test_error_span_is_clean_and_sig_noz_ready(self):
         self.assertIn('"status_code": "ERROR"', self.text)
-        self.assertIn('"http.status_code": 500', self.text)
+        self.assertIn('"http.response.status_code": 500', self.text)
         self.assertIn('"agentscope.status": "error"', self.text)
         self.assertNotIn("agentscope_status_override", self.text)
 

@@ -5,6 +5,7 @@
 **Live judge demo:** https://agentscope-sidekick.vercel.app/?demo=1
 **Authenticated product:** https://agentscope-sidekick.vercel.app
 **Source:** https://github.com/phanixdev/agentscope-sidekick
+**Judge guide:** [docs/JUDGE_GUIDE.md](docs/JUDGE_GUIDE.md)
 
 AgentScope Sidekick is a production-shaped AI agent observability product for Track 1 of the Agents of SigNoz hackathon. It turns correlated OpenTelemetry traces, metrics, and logs into evidence-backed incident explanations for tool failures, retrieval misses, token spikes, and latency regressions.
 
@@ -13,9 +14,10 @@ AgentScope Sidekick is a production-shaped AI agent observability product for Tr
 1. Open the [one-click judge demo](https://agentscope-sidekick.vercel.app/?demo=1). No account or email confirmation is required.
 2. Select the failed `Tool failure` run and inspect **Explain**: confidence is backed by three visible corroborating signals.
 3. Open **Evidence** to verify the trace ID, anomalous span ID, capture time, metric query, threshold, and correlated log.
-4. Open **Compare** to see the first divergent span against a 24-hour healthy peer baseline.
-5. In **Alerts**, choose **Investigate** on a breached guardrail to deep-link into its affected run and evidence.
-6. Choose **View SigNoz proof** for the captured failing trace, native dashboard, deployed alerts, MCP JSON, metric API response, and Terraform apply output.
+4. Open **Compare** to see the first divergent span against the explicitly labeled deterministic reference cohort.
+5. Open **Remediate**, apply one recommendation, and inspect the verified before/after rerun.
+6. In **Alerts**, choose **Investigate** on a breached guardrail to deep-link into its affected run and evidence.
+7. Choose **View SigNoz proof** for the captured failing trace, native dashboard, deployed alerts, MCP JSON, metric API response, and Terraform apply output.
 The hosted judge workspace is deliberately zero-friction and uses deterministic demo data. Authenticated production workspaces persist under Supabase RLS. The reproducible Foundry stack emits and queries the real traces, metrics, and logs shown below.
 
 ## Live SigNoz Proof
@@ -51,16 +53,16 @@ The verified stack ingested **14 spans**, **8 trace-correlated logs**, every cus
 1. Trigger a realistic bad agent run.
 2. Open the breached SigNoz guardrail and deep-link to its affected run.
 3. Correlate the anomalous span, metric threshold, and trace-matched log.
-4. Compare the incident with a healthy 24-hour peer baseline and isolate the first divergent span.
-5. Save the investigation handoff and inspect the matching SigNoz execution proof.
+4. Compare the incident with an observed healthy baseline or an explicitly disclosed deterministic reference and isolate the first divergent span.
+5. Apply a remediation, verify the follow-up run, save the handoff, and inspect the matching SigNoz execution proof.
 
-The diagnosis is deterministic and never invents a cause. The UI shows `3/3 signals corroborated`, exposes the confidence formula, and links every conclusion to the trace ID, span ID, metric query, capture time, threshold comparison, and correlated log used as evidence.
+The diagnosis is deterministic and never invents a cause. The UI shows `3/3 signals corroborated`, labels its heuristic confidence and exposes the corroborating signals, and links every conclusion to the trace ID, span ID, metric query, capture time, threshold comparison, and correlated log used as evidence.
 
 ### Judge-visible differentiation
 
 - **Alert to root cause in two clicks:** every guardrail opens the matching run with breached metric context.
-- **Regression comparison:** duration, tokens, retrieval quality, and cost are compared with healthy peer baselines.
-- **Auditable confidence:** a readable signal count is primary; the numeric score is secondary and formula-backed.
+- **Regression comparison:** duration, tokens, retrieval quality, and cost are compared with observed healthy baselines or disclosed reference cohorts.
+- **Auditable confidence:** a readable signal count is primary; the numeric heuristic is secondary and explicitly non-probabilistic.
 - **Operational SLOs:** run success, p95 latency, tool reliability, token compliance, and retrieval quality share one telemetry source.
 - **Proof without trust:** screenshots are paired with raw MCP, SigNoz API, ClickHouse, and Terraform artifacts.
 
@@ -69,7 +71,8 @@ The diagnosis is deterministic and never invents a cause. The UI shows `3/3 sign
 - Supabase email/password authentication, reset flow, and persistent sessions.
 - Multi-tenant workspaces with owner/admin/member/viewer roles.
 - PostgreSQL schema with RLS on every user-facing table.
-- Indexed agent runs, spans, logs, alerts, and investigation notes.
+- [Executable authentication and tenant-isolation proof](docs/security.md), including pgTAP policy and RPC privilege checks.
+- Indexed agent runs, spans, logs, alerts, investigation notes, and remediation history.
 - Transactional onboarding that seeds a judge-ready incident workspace.
 - Authenticated demo-run RPC for tool failure, retrieval miss, and token spike scenarios.
 - Responsive run explorer, overview, alert management, team view, working run/log filters, loading, error, empty, and toast states.
@@ -152,7 +155,7 @@ npm.cmd run check
 .\scripts\verify_demo.ps1
 ```
 
-The 26-test suite covers explanations, dynamic incidents, confidence provenance, healthy baselines, alert deep links, Supabase RLS contracts, Foundry artifacts, dashboard schema, alert rules, and all-signal OpenTelemetry evidence. GitHub Actions runs the production build and complete suite on every push and pull request. Browser QA covers authenticated sign-in, transactional onboarding, demo-run creation, investigation notes, alerts, desktop, and mobile layouts.
+The 56-test suite covers explanations, dynamic incidents, confidence provenance, observed baseline gating, remediation verification, failure recovery, accessibility contracts, alert deep links, Supabase RLS contracts, Foundry artifacts, dashboard schema, alert rules, and all-signal OpenTelemetry evidence. GitHub Actions runs the production build and complete suite on every push and pull request. Browser QA covers authenticated sign-in, transactional onboarding, demo-run creation, investigation notes, alerts, desktop, and mobile layouts.
 
 ## Security
 
