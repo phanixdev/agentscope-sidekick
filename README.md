@@ -1,5 +1,8 @@
 ﻿# AgentScope Sidekick
 
+**Live product:** https://agentscope-sidekick.vercel.app
+**Source:** https://github.com/phanixdev/agentscope-sidekick
+
 AgentScope Sidekick is a production-shaped AI agent observability product for Track 1 of the Agents of SigNoz hackathon. It turns correlated OpenTelemetry traces, metrics, and logs into evidence-backed incident explanations for tool failures, retrieval misses, token spikes, and latency regressions.
 
 ## Winning Track 1 Story
