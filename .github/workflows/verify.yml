@@ -22,13 +22,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Install frontend dependencies
         run: npm ci
+      - name: Install telemetry dependencies
+        run: python -m pip install -r apps/api/requirements.txt
       - name: Build product and run Track 1 tests
         run: npm run check
       - name: Confirm production bundle
