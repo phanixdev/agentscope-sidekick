@@ -55,4 +55,4 @@ npx supabase test db supabase/tests/rls_isolation.sql
 
 ## Known presentation boundary
 
-The hosted judge mode intentionally avoids requiring credentials or a public SigNoz deployment. The repository includes full-resolution proof and raw query artifacts. The frozen production release is demonstrated in the [84-second Track 1 walkthrough](https://github.com/phanixdev/agentscope-sidekick/raw/refs/heads/main/output/video/agentscope-sidekick-track1.mp4), including real SigNoz proof and the verified remediation loop.
+The hosted judge mode intentionally avoids requiring credentials or a public SigNoz deployment. The repository includes full-resolution proof and raw query artifacts. Record the final walkthrough only after the production release is frozen, using [demo-script.md](demo-script.md).
