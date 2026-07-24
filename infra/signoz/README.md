@@ -1,4 +1,4 @@
-# SigNoz Resources
+# SigNoz Configuration
 
 dashboards.json is a native SigNoz v5 dashboard export. In SigNoz, open
 Dashboards, choose New dashboard, select Import JSON, and upload the file.

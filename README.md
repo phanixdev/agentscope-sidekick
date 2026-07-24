@@ -1,193 +1,173 @@
 # AgentScope Sidekick
 
+[Live Demo](https://agentscope-sidekick.vercel.app/?demo=1) |
+[Authenticated App](https://agentscope-sidekick.vercel.app) |
+[Demo Guide](docs/JUDGE_GUIDE.md) |
+[Architecture](docs/architecture.md) |
+[Latest Release](https://github.com/phanixdev/agentscope-sidekick/releases/latest)
+
 [![Track 1 verification](https://github.com/phanixdev/agentscope-sidekick/actions/workflows/verify.yml/badge.svg)](https://github.com/phanixdev/agentscope-sidekick/actions/workflows/verify.yml)
 
-**Live judge demo:** https://agentscope-sidekick.vercel.app/?demo=1
-**Authenticated product:** https://agentscope-sidekick.vercel.app
-**Source:** https://github.com/phanixdev/agentscope-sidekick
-**Judge guide:** [docs/JUDGE_GUIDE.md](docs/JUDGE_GUIDE.md)
-**Architecture:** [docs/architecture.md](docs/architecture.md)
+I built AgentScope Sidekick to make AI-agent failures easier to investigate. It brings traces, metrics, logs, alert context, and remediation history into one workflow instead of making an operator jump between unrelated tools.
 
-AgentScope Sidekick is a production-shaped AI agent observability product for Track 1 of the Agents of SigNoz hackathon. It turns correlated OpenTelemetry traces, metrics, and logs into evidence-backed incident explanations for tool failures, retrieval misses, token spikes, and latency regressions.
+The project was built for Track 1 of the Agents of SigNoz hackathon. It covers tool failures, weak retrieval, token spikes, and latency regressions with OpenTelemetry data stored and queried through SigNoz.
 
-## Judge It in 90 Seconds
+## What It Does
 
-1. Open the [one-click judge demo](https://agentscope-sidekick.vercel.app/?demo=1). No account or email confirmation is required.
-2. Select the failed `Tool failure` run and inspect **Explain**: confidence is backed by three visible corroborating signals.
-3. Open **Evidence** to verify the trace ID, anomalous span ID, capture time, metric query, threshold, and correlated log.
-4. Open **Compare** to see the first divergent span against the explicitly labeled deterministic reference cohort.
-5. Open **Remediate**, apply one recommendation, and inspect the verified before/after rerun.
-6. In **Alerts**, choose **Investigate** on a breached guardrail to deep-link into its affected run and evidence.
-7. Choose **View SigNoz proof** for the captured failing trace, native dashboard, deployed alerts, MCP JSON, metric API response, and Terraform apply output.
+- Shows each agent run as a trace with retrieval, tool, model, and formatting spans.
+- Correlates failed spans with the metric threshold and log entry that explain the incident.
+- Compares a run with a healthy observed baseline or a clearly labeled deterministic reference.
+- Opens breached guardrails directly in the affected investigation.
+- Applies a remediation and creates a linked verification run with before-and-after results.
+- Supports authenticated, tenant-scoped workspaces through Supabase Auth and PostgreSQL RLS.
+- Includes a no-login demo workspace so the full workflow can be reviewed quickly.
 
-The canonical seed run shows **matching execution** proof because its trace ID equals the captured SigNoz trace. Runs created during the session show **canonical reference** proof, display both trace IDs, and explicitly disclose the mismatch.
+## Demo
 
-The hosted judge workspace is deliberately zero-friction and uses deterministic, browser-local demo data that resets on refresh. Authenticated production workspaces persist under Supabase RLS. The reproducible Foundry stack emits and queries the real traces, metrics, and logs shown below.
+Open the [demo workspace](https://agentscope-sidekick.vercel.app/?demo=1), then:
 
-## Live SigNoz Proof
+1. Select the failed **Tool failure** run.
+2. Review the three corroborating signals under **Explain**.
+3. Open **Evidence** to inspect the trace ID, span ID, metric query, threshold, rule version, and correlated log.
+4. Use **Compare** to find the first divergent span.
+5. Run a recommendation from **Remediate** and inspect the linked verification run.
+6. Open **Alerts** and investigate a breached guardrail.
+7. Open the SigNoz evidence viewer to inspect the captured trace, dashboard, alerts, and raw query artifacts.
 
-### Correlated failing trace
+The seeded failure uses the same trace ID as the captured SigNoz evidence:
 
-![AgentScope failing tool trace in SigNoz](output/signoz/failing-trace-live.png)
+```text
+70468b87b41bc6ecbe14d95f30ebcd2c
+```
 
-### Native all-signals dashboard
+Runs created in the browser receive new trace IDs. The evidence viewer labels those as canonical references and shows both IDs instead of claiming they are the same execution.
 
-![AgentScope native SigNoz dashboard](output/signoz/dashboard-live.png)
+## SigNoz Evidence
 
-### Terraform-managed alert guardrails
+### Failing Trace
 
-![AgentScope alert rules in SigNoz](output/signoz/alerts-live.png)
+![Failing tool trace in SigNoz](output/signoz/failing-trace-live.png)
 
-The verified stack ingested **14 spans**, **8 trace-correlated logs**, every custom agent metric series, and **4 Terraform-managed alert rules**. SigNoz MCP read the failing trace and updated the native dashboard; raw query and apply evidence is committed under `output/telemetry/`.
+### Dashboard
 
-The judge incident and prominent failing-trace proof use the same captured OpenTelemetry trace, `70468b87b41bc6ecbe14d95f30ebcd2c`, from evidence revision `c83b4f7`. The later extended HTTP-to-agent-to-persistence contract is verified separately in `output/telemetry/otel-all-signals.txt`; the UI does not conflate those two captures.
+![Agent operations dashboard in SigNoz](output/signoz/dashboard-live.png)
 
-### Track 1 coverage matrix
+### Alert Rules
 
-| Scoring surface | Implementation | Verifiable evidence |
+![Terraform-managed alert rules in SigNoz](output/signoz/alerts-live.png)
+
+The captured stack contains 14 spans, eight trace-correlated logs, the custom agent metric series, and four Terraform-managed alert rules. Raw MCP, API, ClickHouse, OTLP, and Terraform outputs are kept in [output/telemetry](output/telemetry).
+
+## Track 1 Coverage
+
+| Area | Implementation | Evidence |
 | --- | --- | --- |
-| Foundry reproducibility | Locked SigNoz + MCP deployment | `infra/casting.yaml`, `infra/casting.yaml.lock` |
-| OpenTelemetry traces | Captured agent tree plus extended HTTP-to-persistence contract | `output/telemetry/mcp-failing-trace.json`, `output/telemetry/otel-all-signals.txt` |
-| Metrics | Duration, tokens, tool calls, retrieval quality | `output/telemetry/signoz-api-metric-proof.json` |
-| Correlated logs | Trace/span IDs on WARN and ERROR events | `output/telemetry/clickhouse-live-proof.txt` |
-| Native dashboard | Multi-signal Track 1 operations dashboard | `infra/signoz/dashboards.json` |
-| Alerts | Four Terraform-managed guardrails | `infra/signoz/alerts.tf`, `output/telemetry/terraform-alerts-apply.txt` |
-| SigNoz MCP | Trace investigation and dashboard update | `output/telemetry/mcp-dashboard-update.json` |
-
-## Why This Wins Track 1
-
-| Judge question | Product answer |
-| --- | --- |
-| Is the agent genuinely observable? | One trace follows HTTP, orchestration, retrieval, tool, model, and persistence work; metrics and logs carry the same trace identity. |
-| Does SigNoz do real work? | SigNoz powers the captured trace, multi-signal dashboard, alert guardrails, API evidence, ClickHouse correlation, and MCP investigation. |
-| Is the diagnosis actionable? | Every conclusion exposes the anomalous span, measured value, threshold, correlated log, rule version, and deterministic decision path. |
-| Can an operator close the loop? | Remediation creates a lineage-linked verification run and reports four before/after signals without inflating active breaches. |
-| Is the proof trustworthy? | Exact trace equality is required for "matching execution"; all other runs receive an explicit canonical-reference disclosure. |
-| Is this a product, not a screenshot? | Authentication, RLS tenancy, persistent workspaces, alerts, notes, responsive investigation, recovery states, CI, and deployment are implemented. |
-| Can judges reproduce it? | Foundry locks the stack, Terraform owns alerts, raw evidence is committed, CI runs the release gate, and the architecture documents trust boundaries. |
-
-## Winning Track 1 Story
-
-1. Trigger a realistic bad agent run.
-2. Open the breached SigNoz guardrail and deep-link to its affected run.
-3. Correlate the anomalous span, metric threshold, and trace-matched log.
-4. Compare the incident with an observed healthy baseline or an explicitly disclosed deterministic reference and isolate the first divergent span.
-5. Apply a remediation, verify the follow-up run, save the handoff, and inspect the matching SigNoz execution proof.
-
-The diagnosis is deterministic and never invents a cause. The UI shows `3/3 signals corroborated`, labels its heuristic confidence and exposes the corroborating signals, and links every conclusion to the trace ID, span ID, metric query, capture time, threshold comparison, and correlated log used as evidence.
-
-### Judge-visible differentiation
-
-- **Alert to root cause in two clicks:** every guardrail opens the matching run with breached metric context.
-- **Regression comparison:** duration, tokens, retrieval quality, and cost are compared with observed healthy baselines or disclosed reference cohorts.
-- **Auditable confidence:** a readable signal count is primary; the numeric heuristic is secondary and explicitly non-probabilistic.
-- **Operational SLOs:** run success, p95 latency, tool reliability, token compliance, and retrieval quality share one telemetry source.
-- **Proof without trust:** screenshots are paired with raw MCP, SigNoz API, ClickHouse, and Terraform artifacts.
-
-## Complete Product
-
-- Supabase email/password authentication, reset flow, and persistent sessions.
-- Multi-tenant workspaces with owner/admin/member/viewer roles.
-- PostgreSQL schema with RLS on every user-facing table.
-- [Executable authentication and tenant-isolation proof](docs/security.md), including pgTAP policy and RPC privilege checks.
-- Indexed agent runs, spans, logs, alerts, investigation notes, and remediation history.
-- Transactional onboarding that seeds a judge-ready incident workspace.
-- Authenticated demo-run RPC for tool failure, retrieval miss, and token spike scenarios.
-- Responsive run explorer, overview, alert management, team view, working run/log filters, loading, error, empty, and toast states.
-- One-click ephemeral judge demo in every environment, plus local preview mode when Supabase variables are absent.
-- Live SigNoz, OpenTelemetry collector, MCP, Terraform alerts, and native dashboard assets.
+| Reproducible deployment | Foundry casting and lock file | `infra/casting.yaml`, `infra/casting.yaml.lock` |
+| Traces | HTTP-to-agent trace with retrieval, tool, model, and persistence spans | `output/telemetry/mcp-failing-trace.json`, `output/telemetry/otel-all-signals.txt` |
+| Metrics | Duration, tokens, tool calls, and retrieval quality | `output/telemetry/signoz-api-metric-proof.json` |
+| Logs | WARN and ERROR events correlated by trace and span IDs | `output/telemetry/clickhouse-live-proof.txt` |
+| Dashboard | Native multi-signal SigNoz dashboard | `infra/signoz/dashboards.json` |
+| Alerts | Four Terraform-managed guardrails | `infra/signoz/alerts.tf` |
+| MCP | Trace investigation and dashboard update | `output/telemetry/mcp-dashboard-update.json` |
+| Product workflow | Explanation, comparison, alert drill-down, notes, and remediation | `apps/web/src/main.jsx` |
+| Tenant security | Supabase Auth, RLS, and policy tests | `docs/security.md`, `supabase/tests/rls_isolation.sql` |
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    User["Judge / operator"] --> Web["React UI on Vercel"]
-    Web -->|"judge mode"| Demo["Browser-local demo data"]
-    Web -->|"authenticated mode"| Auth["Supabase Auth"]
-    Auth --> DB[("PostgreSQL + RLS")]
+    User["Operator"] --> Web["React app on Vercel"]
+    Web --> Demo["Local demo workspace"]
+    Web --> Auth["Supabase Auth"]
+    Auth --> DB[("PostgreSQL with RLS")]
     Web <--> DB
 
-    Agent["Instrumented AI agent"] --> OTel["OpenTelemetry SDK"]
-    API["Python incident API"] --> OTel
-    OTel -->|"OTLP traces, metrics, logs"| SigNoz[("SigNoz / ClickHouse")]
-    SigNoz --> Dashboard["Native dashboard"]
+    API["Python API"] --> Agent["Instrumented agent"]
+    API --> OTel["OpenTelemetry"]
+    Agent --> OTel
+    OTel --> SigNoz[("SigNoz / ClickHouse")]
+    SigNoz --> Dashboard["Dashboard"]
     SigNoz --> Alerts["Terraform alerts"]
     SigNoz <--> MCP["SigNoz MCP"]
-    API --> Web
-    SigNoz -. "captured proof" .-> Web
+    SigNoz -. "captured evidence" .-> Web
 ```
 
-The hosted authenticated product uses Supabase directly under RLS; its judge mode is deterministic and requires no account. The full Foundry path adds the Python API and live SigNoz telemetry pipeline. The UI resolves proof by trace identity. It labels the canonical captured incident as a matching SigNoz execution only when IDs are equal; dynamic and authenticated runs receive separately labeled reference proof unless their identity matches.
+The hosted app has two data paths. Demo mode uses deterministic browser-local data and resets on refresh. Authenticated workspaces store tenant-scoped data in Supabase. The reproducible telemetry stack runs the Python services, OpenTelemetry pipeline, SigNoz, ClickHouse, MCP server, dashboard, and alert rules.
 
-See [the complete architecture flow](docs/architecture.md) for the signal lifecycle, trust boundaries, and repository ownership map.
+See [docs/architecture.md](docs/architecture.md) for the full flow, evidence identity rules, trust boundaries, and deployment topology.
 
-## Local Product
+## Repository Layout
+
+```text
+apps/web                 React product
+apps/api                 Incident API
+apps/agent               Instrumented demo agent
+supabase                 Schema, RLS policies, RPCs, and policy tests
+infra                    Foundry, OpenTelemetry, SigNoz, and Terraform
+output/signoz            Captured SigNoz screenshots
+output/telemetry         Raw query and deployment evidence
+docs                     Architecture, security, demo, and submission notes
+tests                    Product and infrastructure contract tests
+```
+
+## Local Setup
 
 ```powershell
 npm install
 Copy-Item .env.example .env.local
-# Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
 npm.cmd run dev
 ```
 
-Without `.env.local`, the same UI opens in browser-local preview mode. With Supabase configured, unauthenticated visitors can still choose **Explore judge demo** without creating an account.
-
-Apply `supabase/migrations` to a Supabase project, then configure these Vercel variables:
+The app opens in local demo mode when Supabase variables are absent. To enable authenticated workspaces, set:
 
 ```text
 VITE_SUPABASE_URL
 VITE_SUPABASE_ANON_KEY
 ```
 
-The publishable Supabase key is intentionally browser-safe; authorization is enforced by RLS and workspace membership policies.
+Apply the migrations in [supabase/migrations](supabase/migrations) before using the authenticated path. The publishable key is safe to expose in the browser; access control is enforced by workspace membership and RLS.
 
-## Full SigNoz Stack
+## SigNoz Stack
 
 ```powershell
 cd infra
 foundryctl gauge -f casting.yaml
 foundryctl cast -f casting.yaml
+docker compose -f pours/deployment/compose.yaml --profile demo-once run --rm agentscope-demo-agent
 ```
 
-Services:
+Local services:
 
 ```text
-http://127.0.0.1:5173  AgentScope Sidekick
-http://127.0.0.1:8088  Sidekick API
+http://127.0.0.1:5173  Web app
+http://127.0.0.1:8088  Incident API
 http://127.0.0.1:8080  SigNoz
 http://127.0.0.1:8000  SigNoz MCP server
 ```
 
-Emit all three signals into SigNoz:
-
-```powershell
-docker compose -f pours/deployment/compose.yaml --profile demo-once run --rm agentscope-demo-agent
-```
-
-The native dashboard is `infra/signoz/dashboards.json`. Four deployed alert rules are defined in `infra/signoz/alerts.tf`, with judge-readable runbooks in `infra/signoz/alerts.json`.
-
-## Verification
+## Tests
 
 ```powershell
 npm.cmd run check
 .\scripts\verify_demo.ps1
 ```
 
-The combined Python and Node verification suite covers evidence identity, breach-aware alert targeting, explanations, dynamic incidents, confidence provenance, observed baseline gating, remediation verification, failure recovery, accessibility contracts, Supabase RLS contracts, Foundry artifacts, dashboard schema, alert rules, and all-signal OpenTelemetry evidence. GitHub Actions runs the production build and complete suite on every push and pull request. Browser QA covers authentication entry, judge-run creation, remediation, alert drill-down, proof viewing, desktop, and mobile layouts.
+`npm.cmd run check` builds the production bundle, runs the Node rule-engine tests, and runs the Python product, security, infrastructure, provenance, responsive-layout, and telemetry tests. The same gate runs in GitHub Actions.
 
 ## Security
 
-- No service-role key is shipped to the browser.
-- Every product table has RLS enabled.
-- Workspace membership scopes all run, span, log, and alert reads.
-- Only owners/admins can update alert rules.
-- Investigation notes are private to their author.
-- Secrets and local environment files are ignored by Git.
+- No service-role credential is included in the browser bundle.
+- RLS is enabled on every user-facing table.
+- Workspace membership scopes runs, spans, logs, alerts, notes, and remediation history.
+- Only owners and admins can modify alert rules.
+- Policy and RPC privileges are covered by pgTAP tests.
+
+More detail is available in [docs/security.md](docs/security.md).
 
 ## License
 
-Released under the [MIT License](LICENSE).
+This project is available under the [MIT License](LICENSE).
 
-## AI Usage Disclosure
+## AI Assistance
 
-This project was planned and implemented with assistance from OpenAI Codex / ChatGPT. Product explanations are grounded in telemetry evidence and have a deterministic fallback when no model key is configured.
+I used OpenAI Codex and ChatGPT while planning and implementing parts of this project. Runtime diagnoses do not depend on unconstrained model output: the product uses versioned rules and telemetry evidence, with a deterministic fallback.

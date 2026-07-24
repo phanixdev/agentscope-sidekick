@@ -1,4 +1,4 @@
-# End-to-end telemetry contract
+# End-to-End Telemetry Contract
 
 The canonical Track 1 trace follows one request through every decision-bearing component:
 
@@ -13,7 +13,7 @@ POST /demo/run                         service: agentscope-api
 
 All child spans preserve the HTTP trace ID. Logs emitted during retrieval, tool execution, and completion inherit the active trace/span context. Metrics use the same scenario and agent dimensions.
 
-## Semantic conventions
+## Semantic Conventions
 
 - HTTP: `http.request.method`, `http.route`, `http.response.status_code`, and `server.address`.
 - Database: `db.system.name`, `db.operation.name`, and `db.collection.name`.

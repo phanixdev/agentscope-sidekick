@@ -1,8 +1,8 @@
-# Authentication and tenant-isolation proof
+# Authentication and Tenant Isolation
 
-AgentScope Sidekick uses Supabase Auth for identity and PostgreSQL row-level security for authorization. The browser receives only the publishable key. No service-role credential is bundled into the web application.
+AgentScope Sidekick uses Supabase Auth for identity and PostgreSQL row-level security for authorization. These controls provide the tenant-isolation boundary for authenticated workspaces. The browser receives only the publishable key. No service-role credential is bundled into the web application.
 
-## Enforced boundaries
+## Enforced Boundaries
 
 | Resource | Read boundary | Write boundary |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ AgentScope Sidekick uses Supabase Auth for identity and PostgreSQL row-level sec
 
 All product tables enable RLS. `create_demo_run`, `get_healthy_baselines`, and `run_remediation` explicitly revoke execution from `PUBLIC` and `anon`, then grant only `authenticated`.
 
-## Executable proof
+## Test Coverage
 
 Run the database policy suite against a local Supabase stack:
 
@@ -26,6 +26,6 @@ npx supabase test db supabase/tests/rls_isolation.sql
 
 The pgTAP suite verifies policy inventories, anonymous RPC denial, authenticated RPC grants, and the membership requirement on note updates. Application contract tests additionally fail when a product table is introduced without an RLS declaration.
 
-## Session behavior
+## Session Behavior
 
 Supabase sessions persist in the browser, refresh automatically, and are revalidated on startup. Unauthenticated users see the sign-in screen or may enter the explicitly labeled, deterministic judge workspace. Signing out removes the authenticated product session.

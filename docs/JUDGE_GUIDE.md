@@ -1,43 +1,47 @@
-# AgentScope Sidekick Judge Guide
+# Demo Guide
 
-## Open first
+## Links
 
-- Judge demo: https://agentscope-sidekick.vercel.app/?demo=1
-- Authenticated product: https://agentscope-sidekick.vercel.app
+- Demo workspace: https://agentscope-sidekick.vercel.app/?demo=1
+- Authenticated app: https://agentscope-sidekick.vercel.app
 - Source: https://github.com/phanixdev/agentscope-sidekick
-- Release: https://github.com/phanixdev/agentscope-sidekick/releases/latest
+- Latest release: https://github.com/phanixdev/agentscope-sidekick/releases/latest
+- Architecture: [architecture.md](architecture.md)
 
-Judge mode is a deterministic, zero-credential, browser-local dataset that resets on refresh. It is labeled as ephemeral reference data in the product. Authenticated workspaces use Supabase persistence and tenant-scoped RLS.
+Demo mode is browser-local and resets on refresh. Authenticated workspaces use Supabase persistence and tenant-scoped RLS.
 
-## 90-second path
+## Walkthrough
 
-1. Open the failed **Tool failure** run. In **Explain**, verify `3/3 signals corroborated` and the explicit facts-to-rule boundary.
-2. Open **Evidence**. Check the trace/span IDs, capture time, metric query, rule ID/version, decision engine, and LLM involvement.
-3. Open **Compare**. Confirm the comparison says **deterministic reference** in judge mode and exposes its source and cohort.
-4. Open **Remediate**, select an action, and choose **Apply and run verification**. Inspect the new correlated run and four-signal before/after result.
-5. Open **Alerts**, then **Investigate** a breached rule. Confirm the alert context deep-links to the affected run.
-6. Open **SigNoz evidence**. For the canonical run, confirm **Trace identity verified**. Create a new run and confirm its proof changes to **canonical reference**, shows both IDs, and says they differ.
-7. Inspect the full-resolution trace, dashboard, alert screenshots, and raw MCP/API/Terraform artifacts.
+1. Open the failed **Tool failure** run.
+2. Under **Explain**, check the failed span, breached latency threshold, correlated HTTP 500 log, and `3/3 signals corroborated` label.
+3. Under **Evidence**, inspect the trace and span IDs, metric query, rule ID, rule version, and decision engine.
+4. Under **Compare**, confirm that demo mode identifies its baseline as a deterministic reference.
+5. Under **Remediate**, apply an action and inspect the linked verification run and before-and-after table.
+6. Open **Alerts**, then investigate one of the breached rules.
+7. Open the SigNoz evidence viewer from the canonical failure. It should say **Trace identity verified**.
+8. Create another demo run and open its evidence. It should show **Canonical reference**, both trace IDs, and **Trace IDs differ**.
 
-## Track 1 proof matrix
+## Evidence Map
 
-| Requirement | Product proof | Repository proof |
+| Capability | Product | Repository |
 | --- | --- | --- |
-| Agent trace visibility | Span timeline and first divergent span | `docs/telemetry-contract.md`, `output/telemetry/otel-all-signals.txt` |
-| GenAI telemetry | Model, tokens, provider, tool and retrieval attributes | `apps/agent/demo_agent.py` |
-| Cross-signal correlation | Trace-matched span, metric, and log evidence | `output/telemetry/mcp-failing-trace.json` |
-| SigNoz dashboards | In-product proof gallery | `infra/signoz/dashboards.json` |
-| Actionable alerts | Alert-to-investigation deep link | `infra/signoz/alerts.tf` |
-| Root-cause workflow | Versioned deterministic rules and provenance | `apps/web/src/main.jsx` |
-| Closed-loop remediation | Before/after verification rerun | `supabase/migrations/202607230004_closed_loop_remediation.sql` |
-| Multi-tenant product | Authenticated workspace and recovery flows | `docs/security.md`, `supabase/tests/rls_isolation.sql` |
-| Reproducibility | Foundry lock, CI, and canonical capture | `infra/casting.yaml.lock`, `.github/workflows/verify.yml` |
+| Agent trace | Span timeline and divergent-span view | `docs/telemetry-contract.md`, `output/telemetry/otel-all-signals.txt` |
+| GenAI attributes | Model, token, provider, tool, and retrieval fields | `apps/agent/demo_agent.py` |
+| Signal correlation | Trace-matched span, metric, and log | `output/telemetry/mcp-failing-trace.json` |
+| Dashboard | Evidence gallery | `infra/signoz/dashboards.json` |
+| Alerts | Alert-to-run investigation | `infra/signoz/alerts.tf` |
+| Diagnosis | Versioned rules and provenance | `apps/web/src/main.jsx` |
+| Remediation | Linked verification run | `supabase/migrations/202607230004_closed_loop_remediation.sql` |
+| Authentication | Tenant-scoped workspace | `docs/security.md`, `supabase/tests/rls_isolation.sql` |
+| Reproducibility | Foundry lock and CI | `infra/casting.yaml.lock`, `.github/workflows/verify.yml` |
 
-## Data disclosure
+## Data Sources
 
-- **Judge mode:** versioned deterministic incident and reference cohorts; no claim of live peer aggregation.
-- **Authenticated mode:** workspace runs are persisted under Supabase RLS. A healthy baseline appears only after at least five healthy runs in the selected 24-hour window; otherwise the UI explicitly falls back to the deterministic reference.
-- **SigNoz proof:** captured from the reproducible Foundry deployment. The canonical judge incident matches trace `70468b87b41bc6ecbe14d95f30ebcd2c` in evidence revision `c83b4f7`. Dynamic and authenticated runs are never presented as that capture unless trace IDs match; the viewer shows both identities and labels canonical-reference mode. Screenshots are paired with raw MCP, API, ClickHouse, OTLP, and Terraform evidence.
+- **Demo workspace:** deterministic incidents and reference cohorts stored in the browser.
+- **Authenticated workspace:** tenant-scoped runs stored in Supabase. An observed baseline requires at least five healthy runs in the selected window.
+- **SigNoz evidence:** a captured Foundry deployment. The canonical incident uses trace `70468b87b41bc6ecbe14d95f30ebcd2c` from revision `c83b4f7`.
+
+The product only calls a proof a matching execution when the selected trace ID equals the evidence trace ID.
 
 ## Verification
 
@@ -46,7 +50,7 @@ npm.cmd run check
 python -m scripts.capture_canonical_trace
 ```
 
-Database policy proof:
+Database policy tests:
 
 ```bash
 npx supabase start
@@ -54,6 +58,4 @@ npx supabase db reset
 npx supabase test db supabase/tests/rls_isolation.sql
 ```
 
-## Known presentation boundary
-
-The hosted judge mode intentionally avoids requiring credentials or a public SigNoz deployment. The repository includes full-resolution proof and raw query artifacts. Record the final walkthrough only after the production release is frozen, using [demo-script.md](demo-script.md).
+The hosted demo does not require a public SigNoz instance. Full-resolution screenshots and the raw query responses are stored in the repository so the capture can be inspected independently.

@@ -110,7 +110,7 @@ class InfraArtifactTests(unittest.TestCase):
         self.assertIn("Track 1", submission)
         self.assertIn("OpenTelemetry", submission)
         self.assertIn("90-Second Track 1 Demo Script", demo_script)
-        self.assertIn("Best use of SigNoz", checklist)
+        self.assertIn("Best Use of SigNoz", checklist)
 
 
 if __name__ == "__main__":

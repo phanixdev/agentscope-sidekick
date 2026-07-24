@@ -1,61 +1,60 @@
-# AgentScope Sidekick Submission Copy
+# Submission Notes
 
-## One-line pitch
+## Project
 
-AgentScope Sidekick makes AI agents debuggable by turning OpenTelemetry/SigNoz traces, logs, token usage, retrieval quality, and tool failures into evidence-backed incident explanations.
+**AgentScope Sidekick**
 
-## Track
+Track 1: AI and Agent Observability
 
-Track 1: AI & Agent Observability
+AgentScope Sidekick turns OpenTelemetry and SigNoz data into an investigation workflow for AI-agent failures.
 
 ## Problem
 
-AI agents fail in ways traditional monitoring does not explain well. A single response can hide many moving parts: retrieval, tool calls, LLM requests, retries, context packing, and final formatting. When cost spikes, latency grows, retrieval misses, or a tool fails, teams need trace-level evidence instead of a vague chatbot answer.
+An agent response can hide retrieval, tool calls, model requests, retries, context growth, and formatting work. When a run becomes slow, expensive, or incorrect, a final error message is not enough. Operators need the trace, metric threshold, and correlated log that explain what happened.
 
-## Solution
+## Approach
 
-AgentScope Sidekick instruments AI agent runs as trace trees and presents them as an operations dashboard. Each agent run has parent spans for the run and child spans for retrieval, tool execution, LLM calls, and response formatting. The sidekick explains failures using telemetry evidence: trace IDs, failed spans, token counts, retrieval scores, HTTP status codes, and correlated logs.
+I modeled each agent run as a trace tree and built an operations interface around it. The interface links a failed run to its anomalous span, measured value, alert threshold, and correlated log. It also supports comparison, notes, alert drill-down, remediation, and a verification rerun.
 
-## What we built
+## Components
 
-- A polished React dashboard for AI-agent operations.
-- A Python API for incidents, demo-run triggering, and evidence-backed explanations.
-- An instrumented demo agent that emits OpenTelemetry SDK spans.
-- Three Track 1 scenarios: tool failure, retrieval miss, and token spike.
-- An official Foundry v0.2.16 deployment that installs SigNoz + MCP and patches in the Sidekick API, web UI, and demo agent.
-- Real correlated OpenTelemetry traces, metrics, and logs, plus a repeatable verifier that proves the complete local workflow.
+- React and Vite product interface.
+- Python incident API.
+- Instrumented demo agent using the OpenTelemetry SDK.
+- Supabase authentication and tenant-scoped persistence.
+- Foundry deployment for SigNoz and MCP.
+- Native SigNoz dashboard.
+- Four Terraform-managed alert rules.
+- Saved raw evidence and an automated verification suite.
 
-## SigNoz / OpenTelemetry usage
+## Demo Scenarios
 
-- Complete agent runs are modeled as parent traces.
-- `query knowledge_chunks` spans include retrieval score and result count.
-- `execute_tool search_docs` spans include tool name, HTTP status, and error status.
-- `chat gpt-4o-mini` spans include model name, input tokens, output tokens, and budget-exceeded attributes.
-- A native SigNoz v5 dashboard combines metrics, traces, and logs for latency, token usage, tool reliability, and correlated errors.
-- Four reviewable Terraform alert rules cover tool failures, peak latency, token budget overflow, and retrieval quality drop.
+1. **Tool failure:** `search_docs` returns HTTP 500 and produces an error span.
+2. **Retrieval miss:** retrieval quality falls below 0.30 with weak source coverage.
+3. **Token spike:** the run completes but exceeds the token budget.
 
-## Demo scenarios
+## SigNoz and OpenTelemetry
 
-1. Tool failure: `search_docs` returns HTTP 500 and produces an error span.
-2. Retrieval miss: retrieval score drops below 0.3 with weak source coverage.
-3. Token spike: the planner succeeds but exceeds the token budget threshold.
+- Parent traces represent complete agent runs.
+- Retrieval spans include score and result count.
+- Tool spans include tool name, status code, and error status.
+- Model spans include provider, model, input tokens, and output tokens.
+- WARN and ERROR logs carry matching trace and span IDs.
+- The dashboard combines latency, tokens, tool reliability, retrieval quality, traces, and logs.
+- Alert rules cover tool failures, peak latency, token budget, and retrieval quality.
+
+## Product Layer
+
+The hosted app includes Supabase Auth, workspace-scoped PostgreSQL data, RLS, onboarding, persistent notes, alert management, and remediation history. A no-login demo is available for reviewing the workflow without configuring credentials.
 
 ## Verification
-
-Run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\verify_demo.ps1
 ```
 
-The verifier checks the current Foundry schema and generated deployment, required artifacts, OpenTelemetry SDK availability, Python tests, frontend build, API smoke tests, demo-run triggering, and saved correlated trace, metric, and log evidence.
+The verifier checks the Foundry files, required artifacts, OpenTelemetry dependencies, Python tests, frontend build, API smoke tests, demo scenarios, and saved trace, metric, and log evidence.
 
-## AI usage disclosure
+## AI Assistance
 
-This project was planned and implemented with assistance from OpenAI Codex / ChatGPT. The product's explanation feature is telemetry-grounded and has a deterministic fallback.
-
-
-
-## Production Product Layer
-
-The submission now includes Supabase authentication, workspace-scoped PostgreSQL persistence, row-level security, transactional onboarding, persisted investigation notes, authenticated demo-run generation, responsive product views, and Vercel deployment configuration. The production UI offers a one-click judge demo in every environment, while authenticated mode was verified against a live Supabase project from account creation through RLS-protected writes. The hosted UI labels its Supabase and captured SigNoz sources explicitly.
+I used OpenAI Codex and ChatGPT during planning and implementation. Product diagnoses are grounded in telemetry and versioned rules rather than unconstrained generated explanations.

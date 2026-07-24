@@ -1,31 +1,33 @@
-# AgentScope Sidekick v1.2.0 - Track 1 Final
+# Release v1.2.0
 
-Production release focused on proof integrity, judge ergonomics, and architectural clarity.
+This release tightens evidence handling, mobile investigation, and the repository documentation.
 
-## Judge entry points
+## Links
 
-- Judge demo: https://agentscope-sidekick.vercel.app/?demo=1
-- Authenticated product: https://agentscope-sidekick.vercel.app
-- Judge guide: https://github.com/phanixdev/agentscope-sidekick/blob/main/docs/JUDGE_GUIDE.md
+- Demo: https://agentscope-sidekick.vercel.app/?demo=1
+- App: https://agentscope-sidekick.vercel.app
+- Demo guide: https://github.com/phanixdev/agentscope-sidekick/blob/main/docs/JUDGE_GUIDE.md
 - Architecture: https://github.com/phanixdev/agentscope-sidekick/blob/main/docs/architecture.md
 
-## Score-critical improvements
+## Changes
 
-- Proof is resolved by trace identity: matching canonical runs are verified, while dynamic runs show a disclosed canonical reference with both trace IDs.
-- Filtering cannot leave an unrelated hidden run in the inspector, timeline, or logs.
-- Reset clears status, agent, and text filters together.
-- The sidebar badge counts enabled guardrails with active breaches, not configured rules.
-- Mobile run exploration uses a compact stacked layout without a table-width scroll trap.
-- Architecture documents execution planes, trust boundaries, proof resolution, failure behavior, and reproducible deployment.
-- MIT licensing removes repository reuse ambiguity.
+- Matching SigNoz evidence now requires trace-ID equality.
+- New browser-created runs show the canonical capture as a reference and disclose both trace IDs.
+- Filtering clears unrelated inspector, timeline, log, and alert context.
+- Reset clears the text, status, and agent filters together.
+- The navigation badge counts enabled rules with active breaches.
+- Mobile run rows use a stacked layout without horizontal table scrolling.
+- The architecture document now covers data planes, evidence identity, trust boundaries, failure behavior, and deployment.
+- Added an MIT license and cleaned the public repository documentation.
 
-## Product foundation
+## Existing Product Features
 
-- Correlated OpenTelemetry traces, metrics, and logs with native SigNoz dashboard and four Terraform-managed guardrails.
-- Deterministic, evidence-backed diagnosis with observed or explicitly labeled reference baselines.
-- Closed-loop remediation with lineage-linked verification runs and four-signal before/after evidence.
-- Supabase authentication, tenant-scoped RLS, persistent notes, and authenticated workspaces.
-- Zero-credential judge mode with explicit ephemeral-data labeling.
+- Correlated OpenTelemetry traces, metrics, and logs in SigNoz.
+- Native dashboard and four Terraform-managed guardrails.
+- Evidence-backed diagnosis and baseline comparison.
+- Linked remediation verification runs.
+- Supabase authentication, tenant-scoped RLS, and persistent workspaces.
+- A browser-local demo that does not require credentials.
 
 ## Verification
 
@@ -33,4 +35,4 @@ Production release focused on proof integrity, judge ergonomics, and architectur
 npm.cmd run check
 ```
 
-The release gate builds the production bundle and runs the Node rule-engine tests plus the complete Python product, security, infrastructure, accessibility, responsive, provenance, and telemetry suite.
+The release gate builds the production bundle and runs the Node and Python product, security, infrastructure, accessibility, responsive-layout, provenance, and telemetry tests.

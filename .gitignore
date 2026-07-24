@@ -14,3 +14,6 @@ __pycache__/
 
 .video-tools/
 output/video/
+# Local browser and design captures
+output/playwright/
+output/product/

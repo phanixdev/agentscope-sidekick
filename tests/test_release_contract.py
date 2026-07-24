@@ -37,12 +37,12 @@ class ReleaseContractTests(unittest.TestCase):
 
     def test_architecture_documents_evidence_and_security_boundaries(self):
         for heading in (
-            "Execution planes",
-            "Evidence identity model",
-            "Proof resolution",
-            "Trust boundaries",
-            "Failure behavior",
-            "Deployment and reproducibility",
+            "Execution Planes",
+            "Evidence Identity",
+            "Proof Resolution",
+            "Trust Boundaries",
+            "Failure Behavior",
+            "Reproducing the Stack",
         ):
             self.assertIn(heading, self.architecture)
 

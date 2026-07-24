@@ -1,6 +1,6 @@
 # AgentScope Sidekick Architecture
 
-## Architectural goals
+## Design Goals
 
 AgentScope Sidekick is designed around four invariants:
 
@@ -9,7 +9,7 @@ AgentScope Sidekick is designed around four invariants:
 3. Authorization is enforced in PostgreSQL through workspace membership and row-level security, not by trusting browser state.
 4. The complete SigNoz deployment is reproducible from versioned Foundry and Terraform assets.
 
-## Execution planes
+## Execution Planes
 
 The system has two connected execution planes with an explicit evidence boundary.
 
@@ -20,7 +20,7 @@ The system has two connected execution planes with an explicit evidence boundary
 | Telemetry plane | Foundry, OpenTelemetry, SigNoz, ClickHouse, MCP, Terraform | Real signal ingestion, queries, dashboards, and deployed guardrails | SigNoz/ClickHouse |
 | Evidence bundle | Versioned repository artifacts | Reproducible proof for the canonical captured execution | Git commit plus release tag |
 
-## System context
+## System Context
 
 ```mermaid
 flowchart LR
@@ -68,7 +68,7 @@ flowchart LR
     Bundle -. "reference or exact trace match" .-> UI
 ```
 
-## Deployment topology
+## Deployment Topology
 
 ```mermaid
 flowchart TB
@@ -92,9 +92,9 @@ flowchart TB
     MCP --> SigNoz
 ```
 
-The hosted product does not require the Foundry network to remain publicly exposed. Judges receive a zero-friction product plus a captured, revision-pinned evidence bundle. The repository retains the deployment inputs needed to reproduce that bundle.
+The hosted product does not require the Foundry network to remain publicly exposed. The hosted app includes a no-login demo and a revision-pinned evidence bundle. The repository retains the deployment inputs needed to reproduce that bundle.
 
-## Investigation lifecycle
+## Investigation Flow
 
 ```mermaid
 sequenceDiagram
@@ -120,7 +120,7 @@ sequenceDiagram
     W-->>J: Resolved, improved, or monitor outcome
 ```
 
-## Evidence identity model
+## Evidence Identity
 
 Evidence is classified before it is displayed.
 
@@ -132,7 +132,7 @@ Evidence is classified before it is displayed.
 | Verification rerun | Fresh trace linked to a parent run | Ephemeral verification rerun or authenticated workspace | Excluded from active breach counts after guardrails pass |
 | Authenticated run | Database identity scoped by workspace | Workspace telemetry | Uses persisted run data; captured repository proof remains a separately labeled reference unless identities match |
 
-## Proof resolution
+## Proof Resolution
 
 ```mermaid
 flowchart TD
@@ -151,7 +151,7 @@ flowchart TD
 
 The proof viewer never rewrites a selected run's identity and never claims that a dynamic run exists in the captured SigNoz bundle.
 
-## Canonical trace hierarchy
+## Canonical Trace
 
 ```text
 POST /demo/run                         agentscope-api
@@ -164,7 +164,7 @@ POST /demo/run                         agentscope-api
 
 One trace ID is preserved across the HTTP request, agent orchestration, retrieval, tool, model, and persistence spans. See `docs/telemetry-contract.md` for semantic attributes and capture commands.
 
-## Trust boundaries
+## Trust Boundaries
 
 | Boundary | Allowed data | Enforcement |
 | --- | --- | --- |
@@ -178,7 +178,7 @@ One trace ID is preserved across the HTTP request, agent orchestration, retrieva
 
 No service-role credential is shipped to the browser. The service-role path is not part of the client architecture.
 
-## Failure behavior
+## Failure Behavior
 
 | Failure | Product behavior | Data guarantee |
 | --- | --- | --- |
@@ -190,7 +190,7 @@ No service-role credential is shipped to the browser. The service-role path is n
 | Remediation succeeds | Create a separately labeled verification run | Verification does not inflate active breach counts |
 | Selected trace differs from proof | Show canonical reference mode and both IDs | No false evidence correlation |
 
-## Data ownership and repository map
+## Repository Map
 
 | Component | Responsibility |
 | --- | --- |
@@ -204,7 +204,7 @@ No service-role credential is shipped to the browser. The service-role path is n
 | `public/evidence` | Judge-readable screenshots derived from the canonical capture |
 | `tests` | Product, evidence identity, security, alert semantics, responsive, and release contracts |
 
-## Deployment and reproducibility
+## Reproducing the Stack
 
 1. `foundryctl gauge -f infra/casting.yaml` validates the casting.
 2. `foundryctl cast -f infra/casting.yaml` creates the locked SigNoz and MCP deployment.
@@ -215,7 +215,7 @@ No service-role credential is shipped to the browser. The service-role path is n
 7. GitHub Actions repeats the release gate.
 8. Vercel deploys the exact commit referenced by the release tag.
 
-## Architectural decisions
+## Design Decisions
 
 - **Deterministic diagnosis:** root-cause decisions are versioned rules; no LLM is in the decision path.
 - **Explicit reference fallback:** comparisons never present deterministic cohorts as observed production peers.
