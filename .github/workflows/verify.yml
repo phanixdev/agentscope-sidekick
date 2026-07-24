@@ -1,4 +1,5 @@
 name: Track 1 verification
+run-name: AgentScope Sidekick validation for ${{ github.ref_name }}
 
 on:
   push:

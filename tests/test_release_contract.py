@@ -16,6 +16,13 @@ class ReleaseContractTests(unittest.TestCase):
         cls.telemetry = (ROOT / "docs/telemetry-contract.md").read_text(encoding="utf-8")
         cls.architecture = (ROOT / "docs/architecture.md").read_text(encoding="utf-8")
         cls.blog = (ROOT / "docs/project-blog-draft.md").read_text(encoding="utf-8")
+        cls.workflow = (ROOT / ".github/workflows/verify.yml").read_text(encoding="utf-8")
+
+    def test_actions_use_a_human_facing_run_title(self):
+        self.assertIn(
+            "run-name: AgentScope Sidekick validation for ${{ github.ref_name }}",
+            self.workflow,
+        )
 
     def test_release_metadata_describes_current_product(self):
         self.assertEqual(self.package["version"], "1.3.0")
