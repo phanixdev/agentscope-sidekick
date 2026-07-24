@@ -58,6 +58,16 @@ class JudgeExperienceContractTests(unittest.TestCase):
         for label in ("Run success", "p95 latency", "Tool reliability", "Token compliance", "Retrieval quality"):
             self.assertIn(label, self.ui)
 
+    def test_filters_reconcile_selection_and_reset_the_full_query(self):
+        self.assertIn("filtered.find((run) => run.id === selectedId) || filtered[0] || null", self.ui)
+        self.assertIn("setQuery(\"\")", self.ui)
+        self.assertIn("selected && selected.id !== selectedId", self.ui)
+        self.assertIn("selected?.id === targetRunId ? alertContext : null", self.ui)
+
+    def test_navigation_badge_counts_active_breached_rules(self):
+        self.assertIn("activeAlertCount", self.ui)
+        self.assertIn("alert.enabled && affectedRunsForAlert(alert, runs).length > 0", self.ui)
+
     def test_all_user_facing_tables_enable_rls(self):
         for table in (
             "profiles", "workspaces", "workspace_members", "agent_runs", "run_spans",

@@ -24,6 +24,12 @@ class MobileAlertContractTests(unittest.TestCase):
         self.assertNotIn(".investigation-lineage>span:nth-of-type(3)", self.styles)
         self.assertNotIn(".investigation-lineage>span:nth-of-type(4)", self.styles)
 
+    def test_mobile_run_explorer_uses_stacked_cards_without_horizontal_scroll(self):
+        self.assertIn(".run-table{overflow:visible}", self.styles)
+        self.assertIn("button.run-row{min-width:0!important", self.styles)
+        self.assertIn('content:"Duration "', self.styles)
+        self.assertIn('content:"Started "', self.styles)
+
 
 if __name__ == "__main__":
     unittest.main()

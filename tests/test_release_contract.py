@@ -17,8 +17,8 @@ class ReleaseContractTests(unittest.TestCase):
         cls.architecture = (ROOT / "docs/architecture.md").read_text(encoding="utf-8")
 
     def test_release_metadata_describes_current_product(self):
-        self.assertEqual(self.package["version"], "1.1.0")
-        self.assertIn("v1.1.0", self.release)
+        self.assertEqual(self.package["version"], "1.2.0")
+        self.assertIn("v1.2.0", self.release)
         self.assertIn("breach", self.release.lower())
         self.assertIn("npm.cmd run check", self.release)
 
@@ -33,6 +33,23 @@ class ReleaseContractTests(unittest.TestCase):
         for content in (self.telemetry, self.architecture):
             self.assertNotIn("â”", content)
             self.assertIn("POST /demo/run", content)
+
+
+    def test_architecture_documents_evidence_and_security_boundaries(self):
+        for heading in (
+            "Execution planes",
+            "Evidence identity model",
+            "Proof resolution",
+            "Trust boundaries",
+            "Failure behavior",
+            "Deployment and reproducibility",
+        ):
+            self.assertIn(heading, self.architecture)
+
+    def test_repository_declares_an_open_source_license(self):
+        license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
+        self.assertIn("MIT License", license_text)
+        self.assertIn("2026", license_text)
 
 
 if __name__ == "__main__":

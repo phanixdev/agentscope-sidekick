@@ -1,23 +1,31 @@
-# AgentScope Sidekick v1.1.0 - Track 1 Final
+# AgentScope Sidekick v1.2.0 - Track 1 Final
 
-Production release aligned with the current judge workflow and evidence bundle.
+Production release focused on proof integrity, judge ergonomics, and architectural clarity.
 
 ## Judge entry points
 
 - Judge demo: https://agentscope-sidekick.vercel.app/?demo=1
 - Authenticated product: https://agentscope-sidekick.vercel.app
 - Judge guide: https://github.com/phanixdev/agentscope-sidekick/blob/main/docs/JUDGE_GUIDE.md
+- Architecture: https://github.com/phanixdev/agentscope-sidekick/blob/main/docs/architecture.md
 
-## Highlights
+## Score-critical improvements
 
-- One canonical 32-character OpenTelemetry trace ID connects the failed judge run to the real SigNoz trace and MCP response.
-- The proof viewer exposes capture time, trace ID, evidence revision, and capture scope.
-- Alert counts and deep links evaluate actual tool, latency, token, and retrieval breaches.
-- Successful remediation reruns are excluded from active alert counts.
-- Alerts show the observed value beside the configured threshold.
-- Overview separates active guardrail breaches from verified remediation runs.
-- The judge dataset is explicitly ephemeral and resets on refresh.
-- Supabase authentication, tenant-scoped RLS, persistent notes, and closed-loop remediation remain available in authenticated workspaces.
+- Proof is resolved by trace identity: matching canonical runs are verified, while dynamic runs show a disclosed canonical reference with both trace IDs.
+- Filtering cannot leave an unrelated hidden run in the inspector, timeline, or logs.
+- Reset clears status, agent, and text filters together.
+- The sidebar badge counts enabled guardrails with active breaches, not configured rules.
+- Mobile run exploration uses a compact stacked layout without a table-width scroll trap.
+- Architecture documents execution planes, trust boundaries, proof resolution, failure behavior, and reproducible deployment.
+- MIT licensing removes repository reuse ambiguity.
+
+## Product foundation
+
+- Correlated OpenTelemetry traces, metrics, and logs with native SigNoz dashboard and four Terraform-managed guardrails.
+- Deterministic, evidence-backed diagnosis with observed or explicitly labeled reference baselines.
+- Closed-loop remediation with lineage-linked verification runs and four-signal before/after evidence.
+- Supabase authentication, tenant-scoped RLS, persistent notes, and authenticated workspaces.
+- Zero-credential judge mode with explicit ephemeral-data labeling.
 
 ## Verification
 
@@ -25,4 +33,4 @@ Production release aligned with the current judge workflow and evidence bundle.
 npm.cmd run check
 ```
 
-The release gate builds the production bundle, runs the Node rule-engine tests, and runs the complete Python product, security, infrastructure, provenance, and telemetry suite.
+The release gate builds the production bundle and runs the Node rule-engine tests plus the complete Python product, security, infrastructure, accessibility, responsive, provenance, and telemetry suite.

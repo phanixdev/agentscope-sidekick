@@ -6,6 +6,7 @@
 **Authenticated product:** https://agentscope-sidekick.vercel.app
 **Source:** https://github.com/phanixdev/agentscope-sidekick
 **Judge guide:** [docs/JUDGE_GUIDE.md](docs/JUDGE_GUIDE.md)
+**Architecture:** [docs/architecture.md](docs/architecture.md)
 
 AgentScope Sidekick is a production-shaped AI agent observability product for Track 1 of the Agents of SigNoz hackathon. It turns correlated OpenTelemetry traces, metrics, and logs into evidence-backed incident explanations for tool failures, retrieval misses, token spikes, and latency regressions.
 
@@ -18,6 +19,9 @@ AgentScope Sidekick is a production-shaped AI agent observability product for Tr
 5. Open **Remediate**, apply one recommendation, and inspect the verified before/after rerun.
 6. In **Alerts**, choose **Investigate** on a breached guardrail to deep-link into its affected run and evidence.
 7. Choose **View SigNoz proof** for the captured failing trace, native dashboard, deployed alerts, MCP JSON, metric API response, and Terraform apply output.
+
+The canonical seed run shows **matching execution** proof because its trace ID equals the captured SigNoz trace. Runs created during the session show **canonical reference** proof, display both trace IDs, and explicitly disclose the mismatch.
+
 The hosted judge workspace is deliberately zero-friction and uses deterministic, browser-local demo data that resets on refresh. Authenticated production workspaces persist under Supabase RLS. The reproducible Foundry stack emits and queries the real traces, metrics, and logs shown below.
 
 ## Live SigNoz Proof
@@ -49,6 +53,18 @@ The judge incident and prominent failing-trace proof use the same captured OpenT
 | Native dashboard | Multi-signal Track 1 operations dashboard | `infra/signoz/dashboards.json` |
 | Alerts | Four Terraform-managed guardrails | `infra/signoz/alerts.tf`, `output/telemetry/terraform-alerts-apply.txt` |
 | SigNoz MCP | Trace investigation and dashboard update | `output/telemetry/mcp-dashboard-update.json` |
+
+## Why This Wins Track 1
+
+| Judge question | Product answer |
+| --- | --- |
+| Is the agent genuinely observable? | One trace follows HTTP, orchestration, retrieval, tool, model, and persistence work; metrics and logs carry the same trace identity. |
+| Does SigNoz do real work? | SigNoz powers the captured trace, multi-signal dashboard, alert guardrails, API evidence, ClickHouse correlation, and MCP investigation. |
+| Is the diagnosis actionable? | Every conclusion exposes the anomalous span, measured value, threshold, correlated log, rule version, and deterministic decision path. |
+| Can an operator close the loop? | Remediation creates a lineage-linked verification run and reports four before/after signals without inflating active breaches. |
+| Is the proof trustworthy? | Exact trace equality is required for "matching execution"; all other runs receive an explicit canonical-reference disclosure. |
+| Is this a product, not a screenshot? | Authentication, RLS tenancy, persistent workspaces, alerts, notes, responsive investigation, recovery states, CI, and deployment are implemented. |
+| Can judges reproduce it? | Foundry locks the stack, Terraform owns alerts, raw evidence is committed, CI runs the release gate, and the architecture documents trust boundaries. |
 
 ## Winning Track 1 Story
 
@@ -101,7 +117,7 @@ flowchart LR
     SigNoz -. "captured proof" .-> Web
 ```
 
-The hosted authenticated product uses Supabase directly under RLS; its judge mode is deterministic and requires no account. The full Foundry path adds the Python API and live SigNoz telemetry pipeline. The UI links each investigation to committed SigNoz execution evidence so the data source is explicit.
+The hosted authenticated product uses Supabase directly under RLS; its judge mode is deterministic and requires no account. The full Foundry path adds the Python API and live SigNoz telemetry pipeline. The UI resolves proof by trace identity. It labels the canonical captured incident as a matching SigNoz execution only when IDs are equal; dynamic and authenticated runs receive separately labeled reference proof unless their identity matches.
 
 See [the complete architecture flow](docs/architecture.md) for the signal lifecycle, trust boundaries, and repository ownership map.
 
@@ -167,6 +183,10 @@ The combined Python and Node verification suite covers evidence identity, breach
 - Only owners/admins can update alert rules.
 - Investigation notes are private to their author.
 - Secrets and local environment files are ignored by Git.
+
+## License
+
+Released under the [MIT License](LICENSE).
 
 ## AI Usage Disclosure
 

@@ -16,7 +16,8 @@ Judge mode is a deterministic, zero-credential, browser-local dataset that reset
 3. Open **Compare**. Confirm the comparison says **deterministic reference** in judge mode and exposes its source and cohort.
 4. Open **Remediate**, select an action, and choose **Apply and run verification**. Inspect the new correlated run and four-signal before/after result.
 5. Open **Alerts**, then **Investigate** a breached rule. Confirm the alert context deep-links to the affected run.
-6. Open **SigNoz evidence**. Inspect the full-resolution trace, dashboard, alert screenshots, and raw MCP/API/Terraform artifacts.
+6. Open **SigNoz evidence**. For the canonical run, confirm **Trace identity verified**. Create a new run and confirm its proof changes to **canonical reference**, shows both IDs, and says they differ.
+7. Inspect the full-resolution trace, dashboard, alert screenshots, and raw MCP/API/Terraform artifacts.
 
 ## Track 1 proof matrix
 
@@ -36,7 +37,7 @@ Judge mode is a deterministic, zero-credential, browser-local dataset that reset
 
 - **Judge mode:** versioned deterministic incident and reference cohorts; no claim of live peer aggregation.
 - **Authenticated mode:** workspace runs are persisted under Supabase RLS. A healthy baseline appears only after at least five healthy runs in the selected 24-hour window; otherwise the UI explicitly falls back to the deterministic reference.
-- **SigNoz proof:** captured from the reproducible Foundry deployment. The judge incident matches trace `70468b87b41bc6ecbe14d95f30ebcd2c` in evidence revision `c83b4f7`; the extended canonical trace is a separately labeled capture. Screenshots are paired with raw MCP, API, ClickHouse, OTLP, and Terraform evidence.
+- **SigNoz proof:** captured from the reproducible Foundry deployment. The canonical judge incident matches trace `70468b87b41bc6ecbe14d95f30ebcd2c` in evidence revision `c83b4f7`. Dynamic and authenticated runs are never presented as that capture unless trace IDs match; the viewer shows both identities and labels canonical-reference mode. Screenshots are paired with raw MCP, API, ClickHouse, OTLP, and Terraform evidence.
 
 ## Verification
 

@@ -27,6 +27,14 @@ class PreviewEvidenceContractTests(unittest.TestCase):
         self.assertIn("breached: rate > 5", self.rules)
         self.assertIn("tool spans", self.rules)
 
+    def test_run_proof_distinguishes_matching_and_reference_evidence(self):
+        self.assertIn("proofMatchesRun", self.ui)
+        self.assertIn("Inspect matching SigNoz execution", self.ui)
+        self.assertIn("Inspect canonical SigNoz reference capture", self.ui)
+        self.assertIn("Trace identity verified", self.ui)
+        self.assertIn("Trace IDs differ", self.ui)
+        self.assertIn("does not claim to match the selected ephemeral run", self.ui)
+
 
 if __name__ == "__main__":
     unittest.main()
