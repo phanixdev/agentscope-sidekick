@@ -31,7 +31,6 @@
 
 ## Submission
 
-- [x] Form-ready Track 1 copy.
 - [x] Explicit AI-assistance disclosure.
 - [x] Public no-login judge URL.
 - [x] New project-blog draft grounded in repository evidence.
@@ -46,5 +45,4 @@
 - Dashboard and alerts: `infra/signoz/`
 - Telemetry contract: `docs/telemetry-contract.md`
 - Demo walkthrough: `docs/demo-script.md`
-- Submission copy: `docs/submission.md`
 - Project blog draft: `docs/project-blog-draft.md`

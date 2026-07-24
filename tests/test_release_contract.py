@@ -15,7 +15,6 @@ class ReleaseContractTests(unittest.TestCase):
         cls.release = (ROOT / "docs/RELEASE_NOTES.md").read_text(encoding="utf-8")
         cls.telemetry = (ROOT / "docs/telemetry-contract.md").read_text(encoding="utf-8")
         cls.architecture = (ROOT / "docs/architecture.md").read_text(encoding="utf-8")
-        cls.submission = (ROOT / "docs/submission.md").read_text(encoding="utf-8")
         cls.blog = (ROOT / "docs/project-blog-draft.md").read_text(encoding="utf-8")
 
     def test_release_metadata_describes_current_product(self):
@@ -30,21 +29,6 @@ class ReleaseContractTests(unittest.TestCase):
         self.assertIn(trace_id, self.readme)
         self.assertIn(trace_id, self.judge)
         self.assertNotIn("56-test suite", self.readme)
-
-    def test_submission_package_matches_the_live_form(self):
-        for heading in (
-            "Project Description",
-            "GitHub Link",
-            "Deployed Link",
-            "YouTube Demo Link",
-            "How SigNoz Is Used",
-            "Project Blog Link",
-            "Hackathon Experience",
-        ):
-            self.assertIn(heading, self.submission)
-        self.assertIn("Track 1: AI & Agent Observability", self.submission)
-        self.assertIn("OpenAI Codex and ChatGPT", self.submission)
-        self.assertIn("infra/casting.yaml.lock", self.submission)
 
     def test_project_blog_has_specific_technical_evidence(self):
         word_count = len(self.blog.split())

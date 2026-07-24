@@ -12,7 +12,7 @@ This release is the submission-ready Track 1 package.
 ## Changes
 
 - Corrected production email-confirmation redirects and added a regression test.
-- Added form-ready submission copy with an explicit AI-assistance disclosure.
+- Added an explicit AI-assistance disclosure to the public project materials.
 - Added a technical project-blog draft grounded in the captured SigNoz evidence.
 
 - Matching SigNoz evidence now requires trace-ID equality.

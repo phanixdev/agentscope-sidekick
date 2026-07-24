@@ -24,7 +24,6 @@ class InfraArtifactTests(unittest.TestCase):
             "apps/web/Dockerfile",
             "scripts/verify_demo.ps1",
             "scripts/start_demo.ps1",
-            "docs/submission.md",
             "docs/demo-script.md",
             "docs/judging-checklist.md",
         ):
@@ -103,12 +102,12 @@ class InfraArtifactTests(unittest.TestCase):
         ):
             self.assertRegex(terraform, rf'metric\s+= "{re.escape(metric)}"')
 
-    def test_submission_docs_name_track_one_story(self):
-        submission = (ROOT / "docs/submission.md").read_text(encoding="utf-8")
+    def test_public_docs_name_track_one_story(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
         demo_script = (ROOT / "docs/demo-script.md").read_text(encoding="utf-8")
         checklist = (ROOT / "docs/judging-checklist.md").read_text(encoding="utf-8")
-        self.assertIn("Track 1", submission)
-        self.assertIn("OpenTelemetry", submission)
+        self.assertIn("Track 1", readme)
+        self.assertIn("OpenTelemetry", readme)
         self.assertIn("90-Second Track 1 Demo Script", demo_script)
         self.assertIn("Best Use of SigNoz", checklist)
 
