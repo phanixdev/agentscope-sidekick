@@ -25,7 +25,10 @@ export function AuthScreen({ onPreview }) {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: email.split("@")[0] } }
+          options: {
+            data: { full_name: email.split("@")[0] },
+            emailRedirectTo: window.location.origin
+          }
         });
         if (error) throw error;
         setMessage(data.session ? "Workspace created." : "Check your inbox to confirm your account.");
