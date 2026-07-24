@@ -4,6 +4,7 @@
 [Authenticated App](https://agentscope-sidekick.vercel.app) |
 [Demo Guide](docs/JUDGE_GUIDE.md) |
 [Architecture](docs/architecture.md) |
+[Submission Package](docs/submission.md) |
 [Latest Release](https://github.com/phanixdev/agentscope-sidekick/releases/latest)
 
 [![Track 1 verification](https://github.com/phanixdev/agentscope-sidekick/actions/workflows/verify.yml/badge.svg)](https://github.com/phanixdev/agentscope-sidekick/actions/workflows/verify.yml)

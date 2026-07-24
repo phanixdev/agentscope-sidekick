@@ -1,6 +1,6 @@
-# Release v1.2.0
+# Release v1.3.0
 
-This release tightens evidence handling, mobile investigation, and the repository documentation.
+This release is the submission-ready Track 1 package.
 
 ## Links
 
@@ -10,6 +10,10 @@ This release tightens evidence handling, mobile investigation, and the repositor
 - Architecture: https://github.com/phanixdev/agentscope-sidekick/blob/main/docs/architecture.md
 
 ## Changes
+
+- Corrected production email-confirmation redirects and added a regression test.
+- Added form-ready submission copy with an explicit AI-assistance disclosure.
+- Added a technical project-blog draft grounded in the captured SigNoz evidence.
 
 - Matching SigNoz evidence now requires trace-ID equality.
 - New browser-created runs show the canonical capture as a reference and disclose both trace IDs.

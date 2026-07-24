@@ -15,10 +15,12 @@ class ReleaseContractTests(unittest.TestCase):
         cls.release = (ROOT / "docs/RELEASE_NOTES.md").read_text(encoding="utf-8")
         cls.telemetry = (ROOT / "docs/telemetry-contract.md").read_text(encoding="utf-8")
         cls.architecture = (ROOT / "docs/architecture.md").read_text(encoding="utf-8")
+        cls.submission = (ROOT / "docs/submission.md").read_text(encoding="utf-8")
+        cls.blog = (ROOT / "docs/project-blog-draft.md").read_text(encoding="utf-8")
 
     def test_release_metadata_describes_current_product(self):
-        self.assertEqual(self.package["version"], "1.2.0")
-        self.assertIn("v1.2.0", self.release)
+        self.assertEqual(self.package["version"], "1.3.0")
+        self.assertIn("v1.3.0", self.release)
         self.assertIn("breach", self.release.lower())
         self.assertIn("npm.cmd run check", self.release)
 
@@ -29,11 +31,42 @@ class ReleaseContractTests(unittest.TestCase):
         self.assertIn(trace_id, self.judge)
         self.assertNotIn("56-test suite", self.readme)
 
+    def test_submission_package_matches_the_live_form(self):
+        for heading in (
+            "Project Description",
+            "GitHub Link",
+            "Deployed Link",
+            "YouTube Demo Link",
+            "How SigNoz Is Used",
+            "Project Blog Link",
+            "Hackathon Experience",
+        ):
+            self.assertIn(heading, self.submission)
+        self.assertIn("Track 1: AI & Agent Observability", self.submission)
+        self.assertIn("OpenAI Codex and ChatGPT", self.submission)
+        self.assertIn("infra/casting.yaml.lock", self.submission)
+
+    def test_project_blog_has_specific_technical_evidence(self):
+        word_count = len(self.blog.split())
+        self.assertGreaterEqual(word_count, 1000)
+        self.assertLessEqual(word_count, 1500)
+        for evidence in (
+            "POST /demo/run",
+            "14 spans",
+            "eight trace-correlated logs",
+            "SigNoz MCP server",
+            "Trace identity verified",
+            "OpenAI Codex and ChatGPT",
+            "failing-trace-live.png",
+            "dashboard-live.png",
+            "alerts-live.png",
+        ):
+            self.assertIn(evidence, self.blog)
+
     def test_architecture_docs_are_free_of_mojibake(self):
         for content in (self.telemetry, self.architecture):
-            self.assertNotIn("â”", content)
+            self.assertNotIn("\u00e2\u201d", content)
             self.assertIn("POST /demo/run", content)
-
 
     def test_architecture_documents_evidence_and_security_boundaries(self):
         for heading in (

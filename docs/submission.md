@@ -1,60 +1,131 @@
-# Submission Notes
+# Submission Copy
 
-## Project
+This document mirrors the live Agents of SigNoz submission form. Personal fields
+and unpublished links are intentionally left as placeholders.
 
-**AgentScope Sidekick**
+## Email
 
-Track 1: AI and Agent Observability
+`[SUBMITTER EMAIL]`
 
-AgentScope Sidekick turns OpenTelemetry and SigNoz data into an investigation workflow for AI-agent failures.
+## Team Name
 
-## Problem
+`[TEAM NAME, OR SUBMITTER NAME IF PARTICIPATING SOLO]`
 
-An agent response can hide retrieval, tool calls, model requests, retries, context growth, and formatting work. When a run becomes slow, expensive, or incorrect, a final error message is not enough. Operators need the trace, metric threshold, and correlated log that explain what happened.
+## Person Submitting
 
-## Approach
+`[FULL NAME]`
 
-I modeled each agent run as a trace tree and built an operations interface around it. The interface links a failed run to its anomalous span, measured value, alert threshold, and correlated log. It also supports comparison, notes, alert drill-down, remediation, and a verification rerun.
+## Track
 
-## Components
+**Track 1: AI & Agent Observability**
 
-- React and Vite product interface.
-- Python incident API.
-- Instrumented demo agent using the OpenTelemetry SDK.
-- Supabase authentication and tenant-scoped persistence.
-- Foundry deployment for SigNoz and MCP.
-- Native SigNoz dashboard.
-- Four Terraform-managed alert rules.
-- Saved raw evidence and an automated verification suite.
+## Project Description
 
-## Demo Scenarios
+AgentScope Sidekick is an incident-investigation workspace for AI agents. An
+agent may return one final answer while hiding the retrieval hops, tool calls,
+model work, latency, token usage, and downstream failures that produced it.
+Sidekick turns those signals into an explainable operational workflow.
 
-1. **Tool failure:** `search_docs` returns HTTP 500 and produces an error span.
-2. **Retrieval miss:** retrieval quality falls below 0.30 with weak source coverage.
-3. **Token spike:** the run completes but exceeds the token budget.
+The project instruments a Python agent and its API, retrieval, tool, LLM, and
+persistence components with OpenTelemetry. It exports traces, custom metrics,
+and trace-correlated logs to a reproducible SigNoz deployment. The product then
+connects a failed run to the exact span, measured threshold, correlated log,
+versioned diagnosis rule, recommended action, and verification rerun.
 
-## SigNoz and OpenTelemetry
+The SigNoz layer includes a native multi-signal dashboard, four
+Terraform-managed alert rules, Query Builder and API evidence, ClickHouse
+verification, and authenticated SigNoz MCP investigations. The React product
+adds a no-login judge workspace plus authenticated, tenant-scoped Supabase
+workspaces with row-level security.
 
-- Parent traces represent complete agent runs.
-- Retrieval spans include score and result count.
-- Tool spans include tool name, status code, and error status.
-- Model spans include provider, model, input tokens, and output tokens.
-- WARN and ERROR logs carry matching trace and span IDs.
-- The dashboard combines latency, tokens, tool reliability, retrieval quality, traces, and logs.
-- Alert rules cover tool failures, peak latency, token budget, and retrieval quality.
+Unlike a generic dashboard, Sidekick preserves evidence identity: it only calls
+a captured SigNoz execution a match when the selected trace ID is identical.
+Fresh browser runs are clearly labeled as references instead of being presented
+as telemetry they did not generate.
 
-## Product Layer
+AI assistance disclosure: I used OpenAI Codex and ChatGPT during planning,
+implementation, testing, and editing. Runtime diagnoses do not depend on
+unconstrained generated output; they use versioned rules and observable
+telemetry evidence.
 
-The hosted app includes Supabase Auth, workspace-scoped PostgreSQL data, RLS, onboarding, persistent notes, alert management, and remediation history. A no-login demo is available for reviewing the workflow without configuring credentials.
+## GitHub Link
 
-## Verification
+https://github.com/phanixdev/agentscope-sidekick
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\verify_demo.ps1
-```
+## Deployed Link
 
-The verifier checks the Foundry files, required artifacts, OpenTelemetry dependencies, Python tests, frontend build, API smoke tests, demo scenarios, and saved trace, metric, and log evidence.
+https://agentscope-sidekick.vercel.app/?demo=1
 
-## AI Assistance
+## YouTube Demo Link
 
-I used OpenAI Codex and ChatGPT during planning and implementation. Product diagnoses are grounded in telemetry and versioned rules rather than unconstrained generated explanations.
+`[PUBLIC YOUTUBE LINK - MAXIMUM 3 MINUTES]`
+
+## How SigNoz Is Used
+
+SigNoz is the observability backend and investigation surface for AgentScope
+Sidekick, not a decorative integration. I deploy SigNoz and its MCP server from
+the versioned Foundry files in `infra/casting.yaml` and
+`infra/casting.yaml.lock`, so judges can reproduce the same stack.
+
+The Python services use the OpenTelemetry SDK and OTLP/HTTP exporters for all
+three signals. One trace ID is propagated from `POST /demo/run` through agent
+orchestration, retrieval, tool execution, the LLM gateway, and persistence.
+Spans carry HTTP, database, GenAI, retrieval, tool, and product guardrail
+attributes. Custom metrics measure run duration, token use, tool calls, and
+retrieval quality. The product derives a cost estimate from token telemetry.
+WARN and ERROR logs inherit the active trace and
+span context, allowing a failed tool span, breached metric threshold, and HTTP
+500 log to be investigated as one incident.
+
+Inside SigNoz, a native dashboard combines the agent latency, token, tool,
+retrieval, trace, and log views. Four Terraform-managed alerts cover tool
+failures, peak latency, token-budget breaches, and weak retrieval. I also use
+the SigNoz MCP server to query the failing trace and update dashboard state,
+with the raw MCP responses committed as evidence. Query Builder/API responses,
+ClickHouse results, OTLP output, Terraform apply output, and full-resolution
+SigNoz screenshots are preserved in the repository.
+
+The canonical capture contains 14 spans and eight trace-correlated logs. The
+hosted product compares selected runs with this evidence bundle and exposes the
+trace ID, span ID, metric query, alert threshold, rule version, and evidence
+source behind every diagnosis.
+
+## Project Blog Link
+
+`[PUBLISHED DEV.TO, MEDIUM, OR SUBSTACK LINK]`
+
+Draft: [project-blog-draft.md](project-blog-draft.md)
+
+## Hackathon Experience
+
+This hackathon changed how I think about agent failures. I started with the
+idea of showing agent traces, but the difficult part was proving that every
+diagnosis came from the same execution. A trace screenshot, a metric, and an
+error log can look convincing while referring to different runs. Preserving
+context across the API, retrieval, tool, LLM, and persistence boundaries made
+trace identity the foundation of the product.
+
+Building with SigNoz also pushed the project beyond a frontend demonstration.
+I worked with OpenTelemetry traces, metrics, and logs, Query Builder results,
+ClickHouse queries, MCP investigations, dashboards, Terraform alerts, and a
+reproducible Foundry deployment. The biggest lesson was that observability is
+most useful when it leads to a decision: identify the failed span, explain the
+threshold breach, apply a remediation, and verify the next run against the same
+guardrails.
+
+I used OpenAI Codex and ChatGPT during planning, implementation, testing, and
+editing. I reviewed and verified the resulting code and claims against the
+running product, raw telemetry artifacts, and automated tests.
+
+## Final Form Checklist
+
+- [ ] Personal email, team name, and submitter name are correct.
+- [x] Track 1 is the only selected track.
+- [x] GitHub repository is public.
+- [x] Judge demo opens without authentication.
+- [x] AI assistance is explicitly disclosed in the form copy.
+- [x] `casting.yaml` and `casting.yaml.lock` are committed.
+- [ ] Public YouTube demo is no longer than three minutes.
+- [ ] New project blog is published on a supported blogging platform.
+- [ ] Every submitted link is tested in a signed-out browser.
+- [ ] The emailed copy of the final response is received.
